@@ -18,58 +18,16 @@ namespace protocol
 {
     const boost::int8_t SUBPIECE_COUNT_IN_ONE_CHECK = 16;
 
-    struct LivePeerPacket
-        : Packet
-    {
-        template <typename Archive>
-        void serialize(Archive & ar)
-        {
-            Packet::serialize(ar);
-
-            ar & protocol_version_;
-            ar & packet_type_;
-            ar & reserved_;
-            ar & resource_id_;
-        }
-
-        virtual ~LivePeerPacket(){}
-
-        LivePeerPacket()
-        {
-            reserved_ = 0;
-            packet_type_ = LIVE_PACKET_TYPE;
-            protocol_version_ = PEER_VERSION;
-        }
-
-        virtual boost::uint32_t length() const
-        {
-            return Packet::length() + 20;
-        }
-
-        boost::uint16_t protocol_version_;
-        //  直播 packet_type_ = 128
-        boost::uint8_t packet_type_;
-        boost::uint8_t reserved_;
-        Guid resource_id_;
-    };
-
-    template <boost::uint8_t action>
-    struct LivePeerPacketT
-        : PacketT<action>
-        , LivePeerPacket
-    {
-    };
-
     /**
     *@brief  LiveRequestAnnounce 包
     */
     struct LiveRequestAnnouncePacket
-        : LivePeerPacketT<0xC0>
+        : CommonPeerPacketT<0xC0>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            LivePeerPacket::serialize(ar);
+            CommonPeerPacket::serialize(ar);
 
             ar & request_block_id_;
             ar & upload_bandwidth_;
@@ -96,7 +54,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return LivePeerPacket::length() + sizeof(request_block_id_) + sizeof(upload_bandwidth_)
+            return CommonPeerPacket::length() + sizeof(request_block_id_) + sizeof(upload_bandwidth_)
                 + sizeof(reserved2_);
         }
 
@@ -271,12 +229,12 @@ namespace protocol
     *@brief  LiveAnnounce 包
     */
     struct LiveAnnouncePacket
-        : LivePeerPacketT<0xC1>
+        : CommonPeerPacketT<0xC1>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            LivePeerPacket::serialize(ar);
+            CommonPeerPacket::serialize(ar);
             ar & live_announce_map_;
         }
 
@@ -309,7 +267,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return LivePeerPacket::length()
+            return CommonPeerPacket::length()
                 + sizeof(boost::uint32_t)  // request_block_id_
                 + sizeof(boost::uint16_t)  // piece_info_count_
                 + sizeof(boost::uint16_t) * live_announce_map_.subpiece_map_.size()  // subpiece_no_
@@ -326,12 +284,12 @@ namespace protocol
     *@brief  LiveRequestSubPiecePacket
     */
     struct LiveRequestSubPiecePacket
-        : LivePeerPacketT<0xC2>
+        : CommonPeerPacketT<0xC2>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            LivePeerPacket::serialize(ar);
+            CommonPeerPacket::serialize(ar);
 
             ar & util::serialization::make_sized<boost::uint8_t>(sub_piece_infos_);
             request_sub_piece_count_ = sub_piece_infos_.size();
@@ -355,7 +313,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            boost::uint32_t len = LivePeerPacket::length() + sizeof(request_sub_piece_count_) +
+            boost::uint32_t len = CommonPeerPacket::length() + sizeof(request_sub_piece_count_) +
                 sub_piece_infos_.size() * LiveSubPieceInfo::length() + sizeof(priority_);
 
             return len;
@@ -371,7 +329,7 @@ namespace protocol
     *@brief  LiveSubPiece 包
     */
     struct LiveSubPiecePacket
-        : LivePeerPacketT<0xC3>
+        : CommonPeerPacketT<0xC3>
     {
         LiveSubPiecePacket()
         {
@@ -403,7 +361,7 @@ namespace protocol
                 ar.fail();
                 return;
             }
-            LivePeerPacket::serialize(ar);
+            CommonPeerPacket::serialize(ar);
             ar & sub_piece_info_;
             ar & sub_piece_length_ ;
 
@@ -416,7 +374,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return LivePeerPacket::length() + sizeof(sub_piece_info_) + sizeof( sub_piece_length_ )
+            return CommonPeerPacket::length() + sizeof(sub_piece_info_) + sizeof( sub_piece_length_ )
                 + sub_piece_length_;
         }
 

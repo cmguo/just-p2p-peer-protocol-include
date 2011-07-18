@@ -24,140 +24,109 @@
 
 namespace protocol
 {
-    struct PeerPacket
+    struct CommonPeerPacket
         : Packet
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
             Packet::serialize(ar);
-            ar & *this;
+            ar & protocol_version_;
+            ar & reserve_;
+            ar & resource_id_;
         }
 
-        PeerPacket()
+        CommonPeerPacket()
         {
-            sequece_id_ = PEER_VERSION;
+            protocol_version_ = PEER_VERSION;
             reserve_ = 0;
-            packet_type_ = VOD_PACKET_TYPE;
-            reserve2_ = 0;
         }
 
-        virtual ~PeerPacket(){}
+        virtual ~CommonPeerPacket(){}
 
         virtual boost::uint32_t length() const
         {
-            return Packet::length() + sizeof(sequece_id_) + sizeof(reserve_) + sizeof(resource_id_) + sizeof(peer_guid_);
+            return Packet::length() + sizeof(protocol_version_) + sizeof(reserve_) + sizeof(resource_id_);
         }
 
-        boost::uint16_t sequece_id_;
+        friend bool operator == (CommonPeerPacket const & l, CommonPeerPacket const & r)
+        {
+            return l.protocol_version_ == r.protocol_version_
+                && l.reserve_ == r.reserve_
+                && r.resource_id_ == r.resource_id_;
+        }
+
+        boost::uint16_t protocol_version_;
         boost::uint16_t reserve_;
         RID resource_id_;
-        Guid peer_guid_;
-        boost::uint16_t protocol_version_;
-        boost::uint8_t packet_type_;
-        boost::uint8_t reserve2_;
-
-        friend bool operator == (
-            PeerPacket const & l,
-            PeerPacket const & r)
-        {
-            // live
-            if (l.packet_type_ == LIVE_PACKET_TYPE && r.packet_type_ == LIVE_PACKET_TYPE)
-            {
-                return l.protocol_version_ == r.protocol_version_ && l.reserve2_ == r.reserve2_
-                    && l.resource_id_ == r.resource_id_ && l.peer_guid_ == r.peer_guid_
-                    && l.end_point == r.end_point && l.PacketAction == r.PacketAction && l.transaction_id_ == r.transaction_id_;
-            }
-            else
-            {
-                return l.sequece_id_ == r.sequece_id_ && l.reserve_ == r.reserve_ && l.resource_id_ == r.resource_id_ && l.peer_guid_ == r.peer_guid_
-                    && l.end_point == r.end_point && l.PacketAction == r.PacketAction && l.transaction_id_ == r.transaction_id_;
-            }
-        }
     };
-
-    template <typename Archive>
-    void serialize(Archive & ar, PeerPacket & t)
-    {
-        util::serialization::split_free(ar, t);
-    }
-
-    template <typename Archive>
-    void load(Archive & ar, PeerPacket & t)
-    {
-        boost::uint8_t temp[4];
-        ar & framework::container::make_array(temp);
-
-        util::archive::ArchiveBuffer<> buf((char*)temp, 4, 4);
-        util::archive::LittleEndianBinaryIArchive<> ia(buf);
-
-        //          点播                                直播
-        // ____________________________         ________________________________
-        // |             |             |        |                   |          |
-        // |sequece_id_  | uint16_t    |        |protocol_version_  | uint16_t |
-        // |             |             |        |                   |          |
-        // |_____________|_____________|        |___________________|__________|
-        // |             |             |        |packet_type_       | uint8_t  |
-        // |reserve_     | uint16_t    |        |___________________|__________|
-        // |             |             |        |reserve2_          | uint8_t  |
-        // |_____________|_____________|        |___________________|__________|
-
-        // 判断packet_type_字段，如果为128代表是直播
-        // 这里我们要求reserve_的前8位必须不能是128
-
-        if (LIVE_PACKET_TYPE == temp[2])  // live
-        {
-            ia >> t.protocol_version_;
-            ia >> t.packet_type_;
-            ia >> t.reserve2_;
-        }
-        else  // vod
-        {
-            ia >> t.sequece_id_;
-            ia >> t.reserve_;
-        }
-
-        ar & t.resource_id_;
-        ar & t.peer_guid_;
-    };
-
-    template <typename Archive>
-    void save(Archive & ar, PeerPacket const & t)
-    {
-        if (128 == t.packet_type_)  // live
-        {
-            ar & t.protocol_version_;
-            ar & t.packet_type_;
-            ar & t.reserve2_;
-        }
-        else  // vod
-        {
-            ar & t.sequece_id_;
-            ar & t.reserve_;
-        }
-
-        ar & t.resource_id_;
-        ar & t.peer_guid_;
-    }
 
     template <boost::uint8_t action>
-    struct PeerPacketT
+    struct CommonPeerPacketT
         : PacketT<action>
-        , PeerPacket
+        , CommonPeerPacket
     {
-        virtual ~PeerPacketT(){}
+        virtual ~CommonPeerPacketT(){}
+    };
+
+    enum ConnectType
+    {
+        CONNECT_VOD             = 0,
+        CONNECT_LIVE_PEER       = 1,
+        CONNECT_LIVE_UDPSERVER  = 2,
+        CONNECT_NOTIFY          = 3,
+        CONNECT_MAX             = 4
+    };
+
+    struct VodPeerPacket
+        : CommonPeerPacket
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            CommonPeerPacket::serialize(ar);
+            ar & peer_guid_;
+        }
+
+        VodPeerPacket()
+        {
+        }
+
+        virtual ~VodPeerPacket(){}
+
+        virtual boost::uint32_t length() const
+        {
+            return CommonPeerPacket::length() + sizeof(peer_guid_);
+        }
+
+        Guid peer_guid_;
+
+        friend bool operator == (
+            VodPeerPacket const & l,
+            VodPeerPacket const & r)
+        {
+            return l.peer_guid_ == r.peer_guid_;
+        }
+    };
+
+    template <boost::uint8_t action>
+    struct VodPeerPacketT
+        : PacketT<action>
+        , VodPeerPacket
+    {
+        virtual ~VodPeerPacketT(){}
     };
 
     /**
     *@brief  Error 包
     */
     struct ErrorPacket
-        : PeerPacketT<0x51>
+        : VodPeerPacketT<0x51>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & error_code_;
             ar & util::serialization::make_sized<boost::uint16_t>(error_info_);
         }
@@ -192,7 +161,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(error_code_) + sizeof(error_info_length_) + error_info_.length();
+            return VodPeerPacket::length() + sizeof(error_code_) + sizeof(error_info_length_) + error_info_.length();
         }
 
         static const boost::uint16_t PPV_EXCHANGE_NO_RESOURCEID = 0x0011;
@@ -214,45 +183,36 @@ namespace protocol
     *@brief  Connect 包
     */
     struct ConnectPacket
-        : PeerPacketT<0x52>
+        : VodPeerPacketT<0x52>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & basic_info_;
             ar & send_off_time_;
             ar & peer_version_;
             ar & peer_info_;
-            ar & reserve3_;
+            ar & connect_type_;
             ar & peer_download_info_;
             ar & ip_pool_size_;
         }
 
         ConnectPacket(boost::uint32_t transaction_id,
-            boost::uint8_t connect_type, RID rid, Guid peer_guid, boost::uint16_t sequece_id_or_protocol_version,
+            RID rid, Guid peer_guid, boost::uint16_t protocol_version,
             boost::uint8_t basic_info, boost::uint32_t send_off_time, boost::uint32_t peer_version,
-            CandidatePeerInfo peer_info, PEER_DOWNLOAD_INFO download_info, boost::asio::ip::udp::endpoint endpoint_, boost::uint16_t ip_pool_size = 0)
+            CandidatePeerInfo peer_info, boost::uint8_t connect_type, PEER_DOWNLOAD_INFO download_info, boost::asio::ip::udp::endpoint endpoint_, boost::uint16_t ip_pool_size = 0)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
-            
-            if (LIVE_PACKET_TYPE == connect_type)
-            {
-                protocol_version_ = sequece_id_or_protocol_version;
-                packet_type_ = LIVE_PACKET_TYPE;
-                reserve2_ = 0;
-            }
-            else
-            {
-                sequece_id_ = sequece_id_or_protocol_version;
-                reserve_ = 0;
-            }
+            protocol_version_ = protocol_version;
             peer_guid_ = peer_guid;
             basic_info_ = basic_info;
             send_off_time_ = send_off_time;
             peer_version_ = peer_version;
             peer_info_ = peer_info;
+            assert(connect_type < ConnectType::CONNECT_MAX);
+            connect_type_ = connect_type;
             peer_download_info_ = download_info;
             end_point = endpoint_;
             ip_pool_size_ = ip_pool_size;
@@ -264,8 +224,8 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(basic_info_) + sizeof(send_off_time_) + sizeof(peer_version_)
-                + sizeof(peer_info_) + sizeof(reserve3_) + sizeof(peer_download_info_) + sizeof(ip_pool_size_);
+            return VodPeerPacket::length() + sizeof(basic_info_) + sizeof(send_off_time_) + sizeof(peer_version_)
+                + sizeof(peer_info_) + sizeof(connect_type_) + sizeof(peer_download_info_) + sizeof(ip_pool_size_);
         }
 
         inline bool IsRequest() const{ if (basic_info_ % 2 == 0) return true; return false;}
@@ -274,7 +234,7 @@ namespace protocol
         boost::uint32_t send_off_time_;
         boost::uint32_t peer_version_;
         CandidatePeerInfo peer_info_;
-        boost::uint8_t reserve3_;
+        boost::uint8_t connect_type_;
         PEER_DOWNLOAD_INFO peer_download_info_;
         boost::uint16_t ip_pool_size_;
     };
@@ -283,12 +243,12 @@ namespace protocol
     *@brief  RequestAnnounce 包
     */
     struct RequestAnnouncePacket
-        : PeerPacketT<0x53>
+        : VodPeerPacketT<0x53>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
         }
 
         RequestAnnouncePacket(boost::uint32_t transaction_id, RID rid, Guid peer_guid, boost::asio::ip::udp::endpoint endpoint_)
@@ -306,7 +266,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length();
+            return VodPeerPacket::length();
         }
     };
 
@@ -314,12 +274,12 @@ namespace protocol
     *@brief  Announce 包
     */
     struct AnnouncePacket
-        : PeerPacketT<0x54>
+        : VodPeerPacketT<0x54>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & peer_download_info_;
             ar & block_map_;
         }
@@ -348,7 +308,7 @@ namespace protocol
 
             block_map_.GetBytes(p);
 
-            return PeerPacket::length() + sizeof(peer_download_info_)
+            return VodPeerPacket::length() + sizeof(peer_download_info_)
                 + sizeof(boost::uint32_t)  // bitset_size
                 + (p - buf) * block_map_.GetCount();
         }
@@ -361,12 +321,12 @@ namespace protocol
     *@brief  RequestSubPiecePacketOld 包, 请求报文中包含GUID
     */
     struct RequestSubPiecePacketOld
-        : PeerPacketT<0x55>
+        : VodPeerPacketT<0x55>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & util::serialization::make_sized<boost::uint16_t>(subpiece_infos_);
         }
 
@@ -413,7 +373,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(subpiece_infos_.size()) + subpiece_infos_.size() * sizeof(SubPieceInfo);
+            return VodPeerPacket::length() + sizeof(subpiece_infos_.size()) + subpiece_infos_.size() * sizeof(SubPieceInfo);
         }
 
         std::vector<SubPieceInfo> subpiece_infos_;
@@ -423,16 +383,12 @@ namespace protocol
     *@brief  RequestSubPiecePacket 包, 请求报文中不包含GUID。直接继承PacketT
     */
     struct RequestSubPiecePacket
-        : PacketT<0x5B>
-        , Packet
+        : CommonPeerPacketT<0x5B>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            Packet::serialize(ar);
-            ar & sequece_id_;
-            ar & reserve_;
-            ar & resource_id_;
+            CommonPeerPacket::serialize(ar);
             ar & util::serialization::make_sized<boost::uint16_t>(subpiece_infos_);
             if (Archive::is_saving::value)
             {
@@ -445,7 +401,7 @@ namespace protocol
             }
             else
             {
-                if (sequece_id_ >= PEER_VERSION_V4)
+                if (protocol_version_ >= PEER_VERSION_V4)
                 {
                     // 新协议直接序列化得到priority_
                     ar & priority_;
@@ -460,8 +416,6 @@ namespace protocol
 
         RequestSubPiecePacket()
         {
-            sequece_id_ = PEER_VERSION;
-            reserve_ = 0;
         }
 
         RequestSubPiecePacket(RequestSubPiecePacket const & packet)
@@ -469,7 +423,7 @@ namespace protocol
             transaction_id_ = packet.transaction_id_;
             resource_id_ = packet.resource_id_;
             subpiece_infos_ = packet.subpiece_infos_;
-            sequece_id_ = PEER_VERSION;
+            protocol_version_ = packet.protocol_version_;
             end_point = packet.end_point;
             priority_ = packet.priority_;
             reserve_ = packet.reserve_;
@@ -487,7 +441,7 @@ namespace protocol
             transaction_id_ = transaction_id;
             resource_id_ = rid;
             subpiece_infos_ = sub_piece_info;
-            sequece_id_ = PEER_VERSION;
+            protocol_version_ = PEER_VERSION;
             end_point = endpoint_;
             priority_ = priority;
             reserve_ = reserve;
@@ -505,7 +459,7 @@ namespace protocol
             transaction_id_ = transaction_id;
             resource_id_ = rid;
             subpiece_infos_.push_back(sub_piece_info);
-            sequece_id_ = PEER_VERSION;
+            protocol_version_ = PEER_VERSION;
             end_point = endpoint_;
             priority_ = priority;
             reserve_ = reserve;
@@ -514,12 +468,9 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return Packet::length() + sizeof(sequece_id_)  +sizeof(reserve_)  + sizeof(resource_id_) + sizeof(subpiece_infos_.size()) + subpiece_infos_.size() * sizeof(SubPieceInfo);
+            return CommonPeerPacket::length() + sizeof(subpiece_infos_.size()) + subpiece_infos_.size() * sizeof(SubPieceInfo);
         }
 
-        boost::uint16_t sequece_id_;
-        boost::uint16_t reserve_;
-        RID    resource_id_;
         std::vector<SubPieceInfo> subpiece_infos_;
         boost::uint16_t priority_;
         static const boost::uint16_t INVALID_PRIORITY = 0xFFFF;
@@ -535,7 +486,7 @@ namespace protocol
     *@brief  SubPiece 包
     */
     struct SubPiecePacket
-        : PeerPacketT<0x56>
+        : VodPeerPacketT<0x56>
     {
         SubPiecePacket()
         {
@@ -569,7 +520,7 @@ namespace protocol
                 ar.fail();
                 return;
             }
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & sub_piece_info_;
             ar & sub_piece_length_;
             protocol::UdpBuffer & buffer = static_cast<protocol::UdpBuffer &>(
@@ -584,7 +535,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(sub_piece_info_) + sizeof(sub_piece_length_) + SUB_PIECE_SIZE;
+            return VodPeerPacket::length() + sizeof(sub_piece_info_) + sizeof(sub_piece_length_) + SUB_PIECE_SIZE;
         }
 
         SubPieceInfo sub_piece_info_;
@@ -597,12 +548,12 @@ namespace protocol
     *@brief  PeerExchange 包
     */
     struct PeerExchangePacket
-        : PeerPacketT<0x57>
+        : VodPeerPacketT<0x57>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & basic_info_;
             ar & util::serialization::make_sized<boost::uint8_t>(peer_info_);
         }
@@ -630,7 +581,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(basic_info_) + peer_info_.size() * sizeof(CandidatePeerInfo);
+            return VodPeerPacket::length() + sizeof(basic_info_) + peer_info_.size() * sizeof(CandidatePeerInfo);
         }
 
         inline bool IsRequest() const{ if (basic_info_ % 2 == 0) return true; return false;}
@@ -643,12 +594,12 @@ namespace protocol
     * RIDInfoRequestPacket
     */
     struct RIDInfoRequestPacket
-        : PeerPacketT<0x58>
+        : VodPeerPacketT<0x58>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
         }
 
         RIDInfoRequestPacket(
@@ -670,7 +621,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length();
+            return VodPeerPacket::length();
         }
     };
 
@@ -678,18 +629,18 @@ namespace protocol
     * RIDInfoPacket
     */
     struct RIDInfoResponsePacket
-        : PeerPacketT<0x59>
+        : VodPeerPacketT<0x59>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             boost::uint16_t block_count_ = block_md5_.size();
             ar & file_length_;
             ar & block_count_;
             ar & block_size_;
             util::serialization::serialize_collection(ar, block_md5_, block_count_);
-            boost::uint16_t peer_version = sequece_id_;
+            boost::uint16_t peer_version = protocol_version_;
             if (peer_version >= 0x000A) {
                 ar & peer_count_info_;
             }
@@ -716,9 +667,9 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            boost::uint32_t len = PeerPacket::length() + sizeof(file_length_) + sizeof(block_size_) + sizeof(block_md5_.size())
+            boost::uint32_t len = VodPeerPacket::length() + sizeof(file_length_) + sizeof(block_size_) + sizeof(block_md5_.size())
                 + block_md5_.size() * sizeof(MD5);
-            boost::uint16_t peer_version = sequece_id_;
+            boost::uint16_t peer_version = protocol_version_;
             if (peer_version >= 0x000A)
             {
                 len += sizeof(peer_count_info_);
@@ -736,12 +687,12 @@ namespace protocol
     * ReportSpeedPacket
     */
     struct ReportSpeedPacket
-        : PeerPacketT<0x5A>
+        : VodPeerPacketT<0x5A>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            PeerPacket::serialize(ar);
+            VodPeerPacket::serialize(ar);
             ar & speed_;
         }
 
@@ -762,7 +713,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return PeerPacket::length() + sizeof(speed_);
+            return VodPeerPacket::length() + sizeof(speed_);
         }
 
         boost::uint32_t speed_;

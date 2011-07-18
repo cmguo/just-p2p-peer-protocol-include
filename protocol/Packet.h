@@ -18,9 +18,6 @@ namespace protocol
     const boost::uint16_t PEER_VERSION_V6 = 0x0106;
     const boost::uint16_t PEER_VERSION = PEER_VERSION_V6;
 
-    const boost::uint8_t LIVE_PACKET_TYPE = 128;
-    const boost::uint8_t VOD_PACKET_TYPE = 1;
-
     struct Packet
     {
         static uint32_t NewTransactionID()
