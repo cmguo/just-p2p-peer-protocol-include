@@ -592,11 +592,20 @@ namespace protocol
         PacketHandler & handler)
     {
         handler.template register_packet<ListPacket>();
+
+        // CommitPacket内核不会发送，这里没有删除是因为考虑不影响服务器
         handler.template register_packet<CommitPacket>();
+
+        // KeepAlivePacket内核不会发送，这里没有删除是因为考虑不影响服务器
         handler.template register_packet<KeepAlivePacket>();
+
         handler.template register_packet<LeavePacket>();
         handler.template register_packet<ReportPacket>();
+
+        // QueryPeerCountPacket内核不会发送，这里没有删除是因为考虑不影响服务器
         handler.template register_packet<QueryPeerCountPacket>();
+
+        // QueryBatchPeerCountPacket内核不会发送，这里没有删除是因为考虑不影响服务器
         handler.template register_packet<QueryBatchPeerCountPacket>();
     }
 
