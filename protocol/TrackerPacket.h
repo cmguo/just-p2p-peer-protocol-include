@@ -586,6 +586,42 @@ namespace protocol
         } response;
     };
 
+    struct InternalCommandPacket
+        : Packet
+        , PacketT<0x38>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            Packet::serialize(ar);
+            ar & magic_number_;
+            ar & command_id_;
+            ar & reserved_;
+        }
+
+        InternalCommandPacket()
+        {
+            reserved_ = 0;
+        }
+
+        InternalCommandPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t magic_number,
+            boost::uint16_t command_id,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            magic_number_ = magic_number;
+            command_id_ = command_id;
+            end_point = endpoint_;
+            reserved_ = 0;
+        }
+
+        boost::uint16_t magic_number_;
+        boost::uint16_t command_id_;
+        boost::uint32_t reserved_;
+    };
+
 
     template <typename PacketHandler>
     void register_tracker_packet(
@@ -607,6 +643,9 @@ namespace protocol
 
         // QueryBatchPeerCountPacket内核不会发送，这里没有删除是因为考虑不影响服务器
         handler.template register_packet<QueryBatchPeerCountPacket>();
+
+        // QueryBatchPeerCountPacket内核不会发送，加到这里是为了让UdpServer能够处理
+        handler.template register_packet<InternalCommandPacket>();
     }
 
 }

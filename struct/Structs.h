@@ -340,6 +340,12 @@ namespace protocol
         NORANGE_P2P_HTTP = 13
     };
 
+
+#define	TYPE_ICOMMAND_DUMPPEER		1000
+#define	TYPE_ICOMMAND_DUMPRESOURCE	1001
+#define INTERNAL_COMMAND_MAGIC_NUMBER 21337
+#define INTERNAL_COMMAND_INTERVAL     30
+
     //////////////////////////////////////////////////////////////////////////
     // Data On App STop
     struct DATA_ONAPPSTOP_INFO
