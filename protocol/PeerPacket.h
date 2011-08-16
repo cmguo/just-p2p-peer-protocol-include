@@ -211,7 +211,7 @@ namespace protocol
             send_off_time_ = send_off_time;
             peer_version_ = peer_version;
             peer_info_ = peer_info;
-            assert(connect_type < ConnectType::CONNECT_MAX);
+            assert(connect_type < CONNECT_MAX);
             connect_type_ = connect_type;
             peer_download_info_ = download_info;
             end_point = endpoint_;
