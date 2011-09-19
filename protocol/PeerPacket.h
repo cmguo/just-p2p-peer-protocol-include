@@ -719,6 +719,95 @@ namespace protocol
         boost::uint32_t speed_;
     };
 
+    /**
+    * RequestSubPiecePacketFromSN
+    */
+    struct RequestSubPiecePacketFromSN
+        : CommonPeerPacketT<0x5D>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            CommonPeerPacket::serialize(ar);
+            ar & util::serialization::make_sized<boost::uint16_t>(resource_name_);
+            ar & util::serialization::make_sized<boost::uint16_t>(subpiece_infos_);
+            ar & priority_;
+        }
+
+        RequestSubPiecePacketFromSN()
+        {
+        }
+
+        RequestSubPiecePacketFromSN(
+            boost::uint32_t transaction_id,
+            const RID & rid,
+            const std::string & resource_name,
+            const std::vector<SubPieceInfo> & sub_piece_info,
+            const boost::asio::ip::udp::endpoint & endpoint_,
+            boost::uint16_t priority,
+            boost::uint16_t reserve = 0)
+        {
+            transaction_id_ = transaction_id;
+            resource_id_ = rid;
+            resource_name_ = resource_name;
+            subpiece_infos_ = sub_piece_info;
+            protocol_version_ = PEER_VERSION;
+            end_point = endpoint_;
+            priority_ = priority;
+            reserve_ = reserve;
+        }
+
+        virtual boost::uint32_t length() const
+        {
+            return CommonPeerPacket::length() + sizeof(resource_name_) + sizeof(subpiece_infos_.size())
+                + subpiece_infos_.size() * sizeof(SubPieceInfo);
+        }
+
+        std::string resource_name_;
+        std::vector<SubPieceInfo> subpiece_infos_;
+        boost::uint16_t priority_;
+
+        static const boost::uint16_t DefaultPriority = 50;
+        static const boost::uint16_t Priority10 = 10;
+        static const boost::uint16_t Priority20 = 20;
+        static const boost::uint16_t Priority30 = 30;
+        static const boost::uint16_t Priority40 = 40;
+    };
+
+    /**
+    * CloseSNSessionPacket
+    */
+    struct CloseSNSessionPacket
+        : Packet
+        , PacketT<0x5C>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            Packet::serialize(ar);
+            ar & protocol_version_;
+        }
+
+        CloseSNSessionPacket(boost::uint32_t transaction_id, boost::uint16_t protocol_version,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            protocol_version_ = protocol_version;
+            end_point = endpoint_;
+        }
+
+        CloseSNSessionPacket()
+        {
+        }
+
+        virtual boost::uint32_t length() const
+        {
+            return Packet::length() + sizeof(protocol_version_);
+        }
+
+        boost::uint16_t protocol_version_;
+    };
+
     template <typename PacketHandler>
     void register_peer_packet(
         PacketHandler & handler)
@@ -734,8 +823,9 @@ namespace protocol
         handler.template register_packet<RIDInfoRequestPacket>();
         handler.template register_packet<RIDInfoResponsePacket>();
         handler.template register_packet<ReportSpeedPacket>();
+        handler.template register_packet<RequestSubPiecePacketFromSN>();
+        handler.template register_packet<CloseSNSessionPacket>();
     }
-
 }
 
 #endif  // _PROTOCOL_PEER_PACKET_H_
