@@ -8,10 +8,9 @@
 #define _NETWORK_UDP_SERVER_HANDLE_PACKET_H_
 
 #include "protocol/PeerPacket.h"
-
 #include <util/archive/LittleEndianBinaryIArchive.h>
 #include <util/archive/LittleEndianBinaryOArchive.h>
-
+#include "UdpServer.h"
 #include <iostream>
 
 namespace protocol
