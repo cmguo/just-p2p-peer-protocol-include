@@ -864,6 +864,35 @@ namespace protocol
         // RidInfo AsRidInfo() const;
     };
 
+    struct SuperNodeInfo
+    {
+        boost::uint32_t ip_;
+        boost::uint16_t port_;
+        boost::uint8_t priority_;
+
+        SuperNodeInfo()
+        {
+            memset(this, 0, sizeof(SuperNodeInfo));
+        }
+
+        SuperNodeInfo(boost::uint32_t ip, boost::uint16_t port, boost::uint16_t priority)
+        {
+            ip_ = ip;
+            port_ = port;
+            priority_ = priority;
+        }
+
+        bool operator == (const SuperNodeInfo& info) const
+        {
+            return ip_ == info.ip_ && port_ == info.port_ && priority_ == info.priority_;
+        }
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ar & ip_ & port_ & priority_;
+        }
+    };
 }
 
 #endif
