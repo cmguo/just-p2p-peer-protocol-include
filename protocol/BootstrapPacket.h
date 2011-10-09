@@ -443,7 +443,7 @@ namespace protocol
         // request
         QuerySnListPacket(
             boost::uint32_t transaction_id,
-            boost::uint32_t peer_version,
+            boost::uint16_t peer_version,
             boost::asio::ip::udp::endpoint endpoint_)
         {
             transaction_id_ = transaction_id;
