@@ -98,6 +98,8 @@ namespace protocol
         boost::uint16_t port_;
         std::map<boost::uint8_t, packet_handler_type> packet_handlers_;
         boost::uint16_t minimal_protocol_version_;
+        boost::uint32_t old_handle_count_;
+        boost::uint32_t new_handle_count_;
     };
 }
 
