@@ -20,6 +20,9 @@ namespace protocol
     /**
     *@brief Peer发向TrackerServer的 List 包和TrackerServer回给Peer的 List 包
     */
+
+    const boost::uint16_t INVALID_VALUE = 0xFFFF;
+
     struct ListPacket
         : public ServerPacketT<0x31>
     {
@@ -321,7 +324,6 @@ namespace protocol
             boost::uint16_t local_resource_count,
             boost::uint16_t server_resource_count,
             boost::uint16_t udp_port,
-            boost::uint16_t peer_version1,
             boost::uint32_t stun_peer_ip,
             boost::uint16_t stun_peer_udpport,
             boost::uint16_t stun_detected_udp_port,
@@ -333,7 +335,8 @@ namespace protocol
             boost::int32_t upload_bandwidth_kbs,
             boost::int32_t upload_limit_kbs,
             boost::int32_t upload_speed_kbs,
-            boost::asio::ip::udp::endpoint endpoint_)
+            boost::asio::ip::udp::endpoint endpoint_,
+            boost::uint16_t upnp_tcp_port = INVALID_VALUE)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -341,7 +344,7 @@ namespace protocol
             request.local_resource_count_ = local_resource_count;
             request.server_resource_count_ = server_resource_count;
             request.udp_port_ = udp_port;
-            request.peer_version1_ = peer_version1;
+            request.upnp_tcp_port_ = upnp_tcp_port;
             request.stun_peer_ip_ = stun_peer_ip;
             request.stun_peer_udp_port_ = stun_peer_udpport;
             request.stun_detected_udp_port_ = stun_detected_udp_port;
@@ -387,9 +390,10 @@ namespace protocol
                 ar & request.peer_nat_type_;
                 ar & request.upload_priority_;
                 ar & request.idle_time_in_mins_;
-                ar & framework::container::make_array(request.reversed_, 3);
+                ar & request.reversed_;
+                ar & request.internal_tcp_port_;
                 ar & request.udp_port_;
-                ar & request.peer_version1_;
+                ar & request.upnp_tcp_port_;
                 ar & request.stun_peer_ip_;
                 ar & request.stun_peer_udp_port_;
                 ar & request.stun_detected_udp_port_;
@@ -425,10 +429,10 @@ namespace protocol
             boost::uint8_t  peer_nat_type_;
             boost::uint8_t  upload_priority_;
             boost::uint8_t  idle_time_in_mins_;
-            boost::uint8_t  reversed_[3];
+            boost::uint8_t  reversed_;
+            boost::uint16_t  internal_tcp_port_;
             boost::uint16_t udp_port_;
-            // peer的版本号，ServerPacket的公共头中已经有peer_version_字段，所以这里命名为peer_version1_
-            boost::uint16_t peer_version1_;
+            boost::uint16_t upnp_tcp_port_;
             boost::uint32_t stun_peer_ip_;
             boost::uint16_t stun_peer_udp_port_;
             boost::uint16_t stun_detected_udp_port_;
