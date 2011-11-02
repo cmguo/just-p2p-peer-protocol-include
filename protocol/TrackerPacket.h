@@ -749,7 +749,7 @@ namespace protocol
 
 
 	 struct ListTcpPacket
-		 : public ServerPacketT<0x41>
+		 : public ServerPacketT<0x3b>
 	 {
 		 template <typename Archive>
 		 void serialize(Archive & ar)
