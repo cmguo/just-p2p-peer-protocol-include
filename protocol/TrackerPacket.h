@@ -21,8 +21,6 @@ namespace protocol
     *@brief Peer发向TrackerServer的 List 包和TrackerServer回给Peer的 List 包
     */
 
-    const boost::uint16_t INVALID_VALUE = 0xFFFF;
-
     struct ListPacket
         : public ServerPacketT<0x31>
     {
@@ -336,7 +334,8 @@ namespace protocol
             boost::int32_t upload_limit_kbs,
             boost::int32_t upload_speed_kbs,
             boost::asio::ip::udp::endpoint endpoint_,
-            boost::uint16_t upnp_tcp_port = INVALID_VALUE)
+            boost::uint16_t internal_tcp_port = 0,
+            boost::uint16_t upnp_tcp_port = 0)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -344,6 +343,7 @@ namespace protocol
             request.local_resource_count_ = local_resource_count;
             request.server_resource_count_ = server_resource_count;
             request.udp_port_ = udp_port;
+            request.internal_tcp_port_ = internal_tcp_port;
             request.upnp_tcp_port_ = upnp_tcp_port;
             request.stun_peer_ip_ = stun_peer_ip;
             request.stun_peer_udp_port_ = stun_peer_udpport;

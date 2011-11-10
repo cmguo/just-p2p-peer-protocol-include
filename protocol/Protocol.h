@@ -41,4 +41,6 @@ const uint32_t LIVE_SUB_PIECE_SIZE = 1400;
 #include "protocol/PushServerPacket.h"
 #include "protocol/NotifyPacket.h"
 
+#include "protocol/TcpPeerPacket.h"
+
 #endif  // PROTOCOL_PROTOCOL_H
