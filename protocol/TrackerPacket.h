@@ -999,9 +999,9 @@ namespace protocol
         //查询tcp的端口
         handler.template register_packet<ListTcpPacket>();
         //带客户端ip，查询资源，用于tracker网管
-        handler.template register_packet<ListPacketWithIp>();
+        handler.template register_packet<ListWithIpPacket>();
         //带客户端ip，查询资源，用于tracker代理
-        handler.template register_packet<ListTcpPacketWithIp>();
+        handler.template register_packet<ListTcpWithIpPacket>();
     }
 
 }
