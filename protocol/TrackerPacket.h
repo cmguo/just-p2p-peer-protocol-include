@@ -626,8 +626,8 @@ namespace protocol
         boost::uint32_t reserved_;
     };
 
-	//ck添加，查询一个peer拥有的rid，注意，这里不是所有的rid，因为一个peer的不同rid是在不同组的tracker上的。
-	 struct QueryPeerResourcesPacket
+    //ck添加，查询一个peer拥有的rid，注意，这里不是所有的rid，因为一个peer的不同rid是在不同组的tracker上的。
+    struct QueryPeerResourcesPacket
         : public ServerPacketT<0x39>
     {
         template <typename Archive>
@@ -640,8 +640,8 @@ namespace protocol
             }
             else{
                 ar & response.peer_guid_;
-               // ar & response.resources_;
-				ar & util::serialization::make_sized<boost::uint8_t>(response.resources_);
+                // ar & response.resources_;
+                ar & util::serialization::make_sized<boost::uint8_t>(response.resources_);
             }
         }
 
@@ -669,7 +669,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             const Guid& peer_guid,
-			const std::vector<RID>& resources,
+            const std::vector<RID>& resources,
             const boost::asio::ip::udp::endpoint& endpoint_)
         {
             transaction_id_ = transaction_id;
@@ -684,138 +684,286 @@ namespace protocol
             Guid peer_guid_;
         } request;
         struct Response {
-			Guid peer_guid_;
-			std::vector<RID> resources_;           
+            Guid peer_guid_;
+            std::vector<RID> resources_;           
         } response;
 
     };
 
-	 struct QueryTrackerStatisticPacket
-		 : public ServerPacketT<0x3a>
-	 {
-		 template <typename Archive>
-		 void serialize(Archive & ar)
-		 {
-			 ServerPacket::serialize(ar);
-			 if (IsRequest)
-			 {
-				//请求没有包体
-			 }
-			 else{
-				// ar & response.tracker_statistic_;				
-				 ar & util::serialization::make_sized<boost::uint16_t>(response.tracker_statistic_);
-			 }
-		 }
+    struct QueryTrackerStatisticPacket
+        : public ServerPacketT<0x3a>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+            if (IsRequest)
+            {
+                //请求没有包体
+            }
+            else{
+                // ar & response.tracker_statistic_;				
+                ar & util::serialization::make_sized<boost::uint16_t>(response.tracker_statistic_);
+            }
+        }
 
-		 QueryTrackerStatisticPacket()
-		 {
-			 // IsRequest = 0;
-		 }
+        QueryTrackerStatisticPacket()
+        {
+            // IsRequest = 0;
+        }
 
-		 // request
-		 QueryTrackerStatisticPacket(
-			 boost::uint32_t transaction_id,
-			 boost::uint32_t peer_version,
-			 const boost::asio::ip::udp::endpoint& endpoint_)
-		 {
-			 transaction_id_ = transaction_id;
-			 peer_version_ = peer_version;
-			 end_point = endpoint_;
-			 IsRequest = 1;
-		 }
+        // request
+        QueryTrackerStatisticPacket(
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
 
-		 // response
-		 QueryTrackerStatisticPacket(
-			 boost::uint32_t transaction_id,
-			 boost::uint8_t error_code,
-			 const std::string& tracker_statistic,
-			 const boost::asio::ip::udp::endpoint& endpoint_)
-		 {
-			 transaction_id_ = transaction_id;
-			 error_code_ = error_code;
-			 response.tracker_statistic_ = tracker_statistic;
-			 end_point = endpoint_;
-			 IsRequest = 0;
+        // response
+        QueryTrackerStatisticPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const std::string& tracker_statistic,
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.tracker_statistic_ = tracker_statistic;
+            end_point = endpoint_;
+            IsRequest = 0;
 
-		 }
-		 struct Request {			
-		 } request;
-		 struct Response {
-			 //用一个string作为回复，简单，易扩展，一了百了。
-			 std::string tracker_statistic_;
-		 } response;
+        }
+        struct Request {			
+        } request;
+        struct Response {
+            //用一个string作为回复，简单，易扩展，一了百了。
+            std::string tracker_statistic_;
+        } response;
 
-	 };
+    };
 
 
-	 struct ListTcpPacket
-		 : public ServerPacketT<0x3b>
-	 {
-		 template <typename Archive>
-		 void serialize(Archive & ar)
-		 {
+    struct ListTcpPacket
+        : public ServerPacketT<0x3b>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
 
-			 ServerPacket::serialize(ar);
-			 if (IsRequest) {
-				 ar & request.resource_id_;
-				 ar & request.peer_guid_;
-				 ar & request.request_peer_count_;
-			 } else{
-				 ar & response.resource_id_;
-				 ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
-			 }
-		 }
+            ServerPacket::serialize(ar);
+            if (IsRequest) {
+                ar & request.resource_id_;
+                ar & request.peer_guid_;
+                ar & request.request_peer_count_;
+            } else{
+                ar & response.resource_id_;
+                ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
+            }
+        }
 
-		 ListTcpPacket()
-		 {
-			 // IsRequest = 1;
-		 }
+        ListTcpPacket()
+        {
+            // IsRequest = 1;
+        }
 
-		 // request
-		 ListTcpPacket(
-			 boost::uint32_t transaction_id,
-			 boost::uint32_t peer_version,
-			 RID resource_id,
-			 Guid peer_guid,
-			 boost::uint16_t request_peer_count,
-			 boost::asio::ip::udp::endpoint endpoint_)
-		 {
-			 transaction_id_ = transaction_id;
-			 peer_version_ = peer_version;
-			 request.resource_id_ = resource_id;
-			 request.peer_guid_ = peer_guid;
-			 request.request_peer_count_ = request_peer_count;
-			 end_point = endpoint_;
-			 IsRequest = 1;
+        // request
+        ListTcpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            RID resource_id,
+            Guid peer_guid,
+            boost::uint16_t request_peer_count,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            request.resource_id_ = resource_id;
+            request.peer_guid_ = peer_guid;
+            request.request_peer_count_ = request_peer_count;
+            end_point = endpoint_;
+            IsRequest = 1;
 
-		 }
+        }
 
-		 // response
-		 ListTcpPacket(
-			 boost::uint32_t transaction_id,
-			 boost::uint8_t error_code,
-			 RID resource_id,
-			 std::vector<CandidatePeerInfo> candidate_peer_info,
-			 boost::asio::ip::udp::endpoint endpoint_)
-		 {
-			 transaction_id_ = transaction_id;
-			 error_code_ = error_code;
-			 response.resource_id_ = resource_id;
-			 response.peer_infos_ = candidate_peer_info;
-			 end_point = endpoint_;
-			 IsRequest = 0;
-		 }
+        // response
+        ListTcpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            RID resource_id,
+            std::vector<CandidatePeerInfo> candidate_peer_info,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;
+            response.peer_infos_ = candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
 
-		 struct Request {
-			 RID resource_id_;
-			 Guid peer_guid_;
-			 boost::uint16_t request_peer_count_;
-		 } request;
-		 struct Response {
-			 RID resource_id_;
-			 std::vector<CandidatePeerInfo> peer_infos_;
-		 } response;
-	 };
+        struct Request {
+            RID resource_id_;
+            Guid peer_guid_;
+            boost::uint16_t request_peer_count_;
+        } request;
+        struct Response {
+            RID resource_id_;
+            std::vector<CandidatePeerInfo> peer_infos_;
+        } response;
+    };
+
+
+    //和list不同的是，这里制定了客户端的ip，而不是从socket里获取
+    struct ListWithIpPacket
+        : public ServerPacketT<0x3c>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+
+            ServerPacket::serialize(ar);
+            if (IsRequest) {
+                ar & request.resource_id_;
+                ar & request.peer_guid_;
+                ar & request.request_peer_count_;
+                ar & request.reqest_ip_;
+            } else{
+                ar & response.resource_id_;
+                ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
+            }
+        }
+
+        ListWithIpPacket()
+        {
+            // IsRequest = 1;
+        }
+
+        // request
+        ListWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            RID resource_id,
+            Guid peer_guid,
+            boost::uint16_t request_peer_count,
+            boost::uint32_t reqest_ip,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            request.resource_id_ = resource_id;
+            request.peer_guid_ = peer_guid;
+            request.request_peer_count_ = request_peer_count;
+            request.reqest_ip_ = reqest_ip;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        ListWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            RID resource_id,
+            std::vector<CandidatePeerInfo> candidate_peer_info,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;
+            response.peer_infos_ = candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        struct Request {
+            RID resource_id_;
+            Guid peer_guid_;
+            boost::uint16_t request_peer_count_;
+            boost::uint32_t reqest_ip_;
+        } request;
+        struct Response {
+            RID resource_id_;
+            std::vector<CandidatePeerInfo> peer_infos_;
+        } response;
+    };
+
+    //和list不同的是，这里制定了客户端的ip，而不是从socket里获取
+    struct ListTcpWithIpPacket
+        : public ServerPacketT<0x3d>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+
+            ServerPacket::serialize(ar);
+            if (IsRequest) {
+                ar & request.resource_id_;
+                ar & request.peer_guid_;
+                ar & request.request_peer_count_;
+                ar & request.reqest_ip_;
+            } else{
+                ar & response.resource_id_;
+                ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
+            }
+        }
+
+        ListTcpWithIpPacket()
+        {
+            // IsRequest = 1;
+        }
+
+        // request
+        ListTcpWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            RID resource_id,
+            Guid peer_guid,
+            boost::uint16_t request_peer_count,
+            boost::uint32_t reqest_ip,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            request.resource_id_ = resource_id;
+            request.peer_guid_ = peer_guid;
+            request.request_peer_count_ = request_peer_count;
+            request.reqest_ip_ = reqest_ip;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        ListTcpWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            RID resource_id,
+            std::vector<CandidatePeerInfo> candidate_peer_info,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;
+            response.peer_infos_ = candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        struct Request {
+            RID resource_id_;
+            Guid peer_guid_;
+            boost::uint16_t request_peer_count_;
+            boost::uint32_t reqest_ip_;
+        } request;
+        struct Response {
+            RID resource_id_;
+            std::vector<CandidatePeerInfo> peer_infos_;
+        } response;
+    };
+
 
 
     template <typename PacketHandler>
@@ -842,13 +990,18 @@ namespace protocol
         // QueryBatchPeerCountPacket内核不会发送，加到这里是为了让UdpServer能够处理
         handler.template register_packet<InternalCommandPacket>();
 
-		//查问题使用的命令，内核不会发送
-		handler.template register_packet<QueryPeerResourcesPacket>();
-		
-		//查询tracker 统计的后台命令
-		handler.template register_packet<QueryTrackerStatisticPacket>();
+        //查问题使用的命令，内核不会发送
+        handler.template register_packet<QueryPeerResourcesPacket>();
 
-		handler.template register_packet<ListTcpPacket>();
+        //查询tracker 统计的后台命令
+        handler.template register_packet<QueryTrackerStatisticPacket>();
+
+        //查询tcp的端口
+        handler.template register_packet<ListTcpPacket>();
+        //带客户端ip，查询资源，用于tracker网管
+        handler.template register_packet<ListPacketWithIp>();
+        //带客户端ip，查询资源，用于tracker代理
+        handler.template register_packet<ListTcpPacketWithIp>();
     }
 
 }
