@@ -73,11 +73,18 @@ namespace protocol
 
     struct TRACKER_INFO
     {
+        enum TrackerType
+        {
+            TCP = 0,
+            UDP,
+            LIVE_UDPSERVER_TRACKER,
+        };
+
         boost::uint16_t Length;
         boost::uint8_t ModNo;
         uint32_t IP;
         boost::uint16_t Port;
-        boost::uint8_t Type;  // 1 UDP
+        boost::uint8_t Type;  // 1 UDP, 2 Tracker for Live UdpServer
 
         template <typename Archive>
         void serialize(Archive & ar)
@@ -129,6 +136,11 @@ namespace protocol
                 Type = tracker.Type;
             }
             return *this;
+        }
+
+        bool IsTrackerForLiveUdpServer() const
+        {
+            return Type == LIVE_UDPSERVER_TRACKER;
         }
     };
 

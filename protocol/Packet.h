@@ -19,7 +19,8 @@ namespace protocol
     const boost::uint16_t PEER_VERSION_V7 = 0x0107;
     const boost::uint16_t PEER_VERSION_V8 = 0x0108;
     const boost::uint16_t PEER_VERSION_V9 = 0x0109;
-    const boost::uint16_t PEER_VERSION = PEER_VERSION_V9;
+    const boost::uint16_t PEER_VERSION_V10 = 0x010a;
+    const boost::uint16_t PEER_VERSION = PEER_VERSION_V10;
 
     struct Packet
     {
