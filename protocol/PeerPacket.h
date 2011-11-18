@@ -174,6 +174,9 @@ namespace protocol
         static const boost::uint16_t PPV_SUBPIECE_UPLOAD_BUSY = 0x0043;
         static const boost::uint16_t PPV_RIDINFO_NO_RESOURCEID = 0x0051;
 
+        static const boost::uint16_t PPV_SN_BUSY = 0x60;
+        static const boost::uint16_t PPV_SN_ERROR = 0x61;
+
         boost::uint16_t error_code_;
         boost::uint16_t error_info_length_;
         std::string error_info_;
