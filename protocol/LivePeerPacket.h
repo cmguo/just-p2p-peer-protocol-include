@@ -384,6 +384,203 @@ namespace protocol
         LiveSubPieceInfo sub_piece_info_;
     };
 
+    struct PeerInfo
+    {
+        PeerInfo()
+        {
+            peer_info_length_ = 0;
+            download_connected_count_ = 0;
+            upload_connected_count_ = 0;
+            upload_speed_ = 0;
+            max_upload_speed_ = 0;
+            rest_playable_time_ = 0;
+            lost_rate_ = 0;
+            redundancy_rate_ = 0;
+        }
+
+        PeerInfo(boost::uint8_t download_connected_count,
+            boost::uint8_t upload_connected_count,
+            boost::uint32_t upload_speed,
+            boost::uint32_t max_upload_speed,
+            boost::uint32_t rest_playable_time,
+            boost::uint8_t lost_rate,
+            boost::uint8_t redundancy_rate)
+        {
+            download_connected_count_ = download_connected_count;
+            upload_connected_count_ = upload_connected_count;
+            upload_speed_ = upload_speed;
+            max_upload_speed_ = max_upload_speed;
+            rest_playable_time_ = rest_playable_time;
+            lost_rate_ = lost_rate;
+            redundancy_rate_ = redundancy_rate;
+
+            peer_info_length_ = sizeof(download_connected_count_) + sizeof(upload_connected_count_) + 
+                sizeof(upload_speed_) + sizeof(max_upload_speed_) + sizeof(rest_playable_time_) + sizeof(lost_rate_) +
+                sizeof(redundancy_rate_);
+        }
+
+        boost::uint32_t peer_info_length_;
+        boost::uint8_t download_connected_count_;
+        boost::uint8_t upload_connected_count_;
+        boost::uint32_t upload_speed_;
+        boost::uint32_t max_upload_speed_;
+        boost::uint32_t rest_playable_time_;
+        boost::uint8_t lost_rate_;
+        boost::uint8_t redundancy_rate_;
+    };
+
+    template <typename Archive>
+    void serialize(Archive & ar, PeerInfo & t)
+    {
+        util::serialization::split_free(ar, t);
+    }
+
+    template <typename Archive>
+    void load(Archive & ar, PeerInfo & t)
+    {
+        ar & t.peer_info_length_;
+
+        boost::uint32_t peer_info_length = t.peer_info_length_;
+
+        if (peer_info_length >= sizeof(t.download_connected_count_))
+        {
+            ar & t.download_connected_count_;
+            peer_info_length -= sizeof(t.download_connected_count_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.upload_connected_count_))
+        {
+            ar & t.upload_connected_count_;
+            peer_info_length -= sizeof(t.upload_connected_count_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.upload_speed_))
+        {
+            ar & t.upload_speed_;
+            peer_info_length -= sizeof(t.upload_speed_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.max_upload_speed_))
+        {
+            ar & t.max_upload_speed_;
+            peer_info_length -= sizeof(t.max_upload_speed_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.rest_playable_time_))
+        {
+            ar & t.rest_playable_time_;
+            peer_info_length -= sizeof(t.rest_playable_time_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.lost_rate_))
+        {
+            ar & t.lost_rate_;
+            peer_info_length -= sizeof(t.lost_rate_);
+        }
+        else
+        {
+            return;
+        }
+
+        if (peer_info_length >= sizeof(t.redundancy_rate_))
+        {
+            ar & t.redundancy_rate_;
+            peer_info_length -= sizeof(t.redundancy_rate_);
+        }
+        else
+        {
+            return;
+        }
+    }
+
+
+    template <typename Archive>
+    void save(Archive & ar, PeerInfo const & t)
+    {
+        assert(t.peer_info_length_ == sizeof(t.download_connected_count_) + sizeof(t.upload_connected_count_) + 
+            sizeof(t.upload_speed_) + sizeof(t.max_upload_speed_) + sizeof(t.rest_playable_time_) + sizeof(t.lost_rate_) +
+            sizeof(t.redundancy_rate_));
+
+        ar & t.peer_info_length_;
+        ar & t.download_connected_count_;
+        ar & t.upload_connected_count_;
+        ar & t.upload_speed_;
+        ar & t.max_upload_speed_;
+        ar & t.rest_playable_time_;
+        ar & t.lost_rate_;
+        ar & t.redundancy_rate_;
+    }
+
+    /**
+    *@brief  PeerInfoPacket 包
+    */
+    struct PeerInfoPacket
+        : PacketT<0xC4>
+        , Packet
+    {
+        PeerInfoPacket()
+        {
+        }
+
+        PeerInfoPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t protocol_version,
+            const PeerInfo & peer_info,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            protocol_version_ = protocol_version;
+            peer_info_ = peer_info;
+            end_point = endpoint_;
+        }
+
+        PeerInfoPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t protocol_version,
+            const PeerInfo & peer_info)
+        {
+            transaction_id_ = transaction_id;
+            protocol_version_ = protocol_version;
+            peer_info_ = peer_info;
+        }
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            Packet::serialize(ar);
+            ar & protocol_version_;
+            ar & peer_info_;
+        }
+
+        virtual boost::uint32_t length() const
+        {
+            return Packet::length() + sizeof(protocol_version_) + sizeof(PeerInfo);
+        }
+
+        boost::uint16_t protocol_version_;
+        PeerInfo peer_info_;
+    };
+
     template <typename PacketHandler>
     void register_live_peer_packet(
         PacketHandler & handler)
@@ -392,6 +589,7 @@ namespace protocol
         handler.template register_packet<LiveAnnouncePacket>();
         handler.template register_packet<LiveRequestSubPiecePacket>();
         handler.template register_packet<LiveSubPiecePacket>();
+        handler.template register_packet<PeerInfoPacket>();
     }
 }
 
