@@ -484,6 +484,103 @@ namespace protocol
         } response;
     };
 
+    /**
+    *@brief Peer发向BootStrap的 QueryTrackerForListingPacket 包
+    * BootStrap回给Peer的 QueryTrackerForListingPacket 包
+    */
+    struct QueryTrackerForListingPacket
+        :public ServerPacketT<0x1D>
+    {
+        enum TrackerType
+        {
+            VOD_TRACKER_FOR_LISTING = 0,
+            LIVE_TRACKER_FOR_LISTING = 1,
+            MAX_TRACKER_FOR_LISTING_TYPE = 2,
+        };
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+
+            ar & tracker_type_;
+
+            if (!IsRequest)
+            {
+                ar & response.tracker_group_count_
+                    & util::serialization::make_sized<boost::uint16_t>(response.tracker_info_);
+            }
+
+            assert(tracker_type_ < MAX_TRACKER_FOR_LISTING_TYPE);
+        }
+
+        QueryTrackerForListingPacket()
+        {
+        }
+
+        // request
+        QueryTrackerForListingPacket(
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            boost::uint8_t tracker_type,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            assert(tracker_type < MAX_TRACKER_FOR_LISTING_TYPE);
+
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            tracker_type_ = tracker_type;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        QueryTrackerForListingPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            boost::uint8_t tracker_type,
+            boost::uint16_t tracker_group_count,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            assert(tracker_type < MAX_TRACKER_FOR_LISTING_TYPE);
+
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            tracker_type_ = tracker_type;
+            response.tracker_group_count_ = tracker_group_count;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        // response
+        QueryTrackerForListingPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            boost::uint8_t tracker_type,
+            boost::uint16_t tracker_group_count,
+            const std::vector<TRACKER_INFO> & tracker_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            assert(tracker_type < MAX_TRACKER_FOR_LISTING_TYPE);
+
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            tracker_type_ = tracker_type;
+            response.tracker_group_count_ = tracker_group_count;
+            response.tracker_info_ = tracker_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        boost::uint8_t tracker_type_;
+
+        struct Response
+        {
+            boost::uint16_t tracker_group_count_;
+            std::vector<TRACKER_INFO> tracker_info_;
+        } response;
+    };
+
     template <typename PacketHandler>
     inline void register_bootstrap_packet(
         PacketHandler & handler)
@@ -495,6 +592,7 @@ namespace protocol
         handler.template register_packet<QueryConfigStringPacket>();
         handler.template register_packet<QueryLiveTrackerListPacket>();
         handler.template register_packet<QuerySnListPacket>();
+        handler.template register_packet<QueryTrackerForListingPacket>();
     }
 
 }

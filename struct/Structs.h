@@ -80,7 +80,8 @@ namespace protocol
             LIVE_UDPSERVER_TRACKER,
         };
 
-        boost::uint16_t Length;
+        boost::uint8_t StationNo;
+        boost::uint8_t Reserve;
         boost::uint8_t ModNo;
         uint32_t IP;
         boost::uint16_t Port;
@@ -89,23 +90,23 @@ namespace protocol
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            ar & Length & ModNo & IP & Port & Type;
+            ar & StationNo & Reserve & ModNo & IP & Port & Type;
         }
 
         bool operator == (const TRACKER_INFO& n) const
         {
-            return Length == n.Length && ModNo == n.ModNo && IP == n.IP && Port == n.Port && Type == n.Type;
+            return StationNo == n.StationNo && ModNo == n.ModNo && IP == n.IP && Port == n.Port && Type == n.Type;
         }
 
         bool operator < (const TRACKER_INFO& n) const
         {
-            if (Length != n.Length)
-            {
-                return Length < n.Length;
-            }
-            else if (ModNo != n.ModNo)
+            if (ModNo != n.ModNo)
             {
                 return ModNo < n.ModNo;
+            }
+            else if (StationNo != n.StationNo)
+            {
+                return StationNo < n.StationNo;
             }
             else if (IP != n.IP)
             {
@@ -129,7 +130,7 @@ namespace protocol
         {
             assert((unsigned long)(&tracker) % 4 == 0);
             if (this != &tracker) {
-                Length = tracker.Length;
+                StationNo = tracker.StationNo;
                 ModNo = tracker.ModNo;
                 IP = tracker.IP;
                 Port = tracker.Port;
