@@ -778,9 +778,9 @@ namespace protocol
     };
 
     /**
-    * CloseSNSessionPacket
+    * CloseSessionPacket
     */
-    struct CloseSNSessionPacket
+    struct CloseSessionPacket
         : Packet
         , PacketT<0x5C>
     {
@@ -791,7 +791,7 @@ namespace protocol
             ar & protocol_version_;
         }
 
-        CloseSNSessionPacket(boost::uint32_t transaction_id, boost::uint16_t protocol_version,
+        CloseSessionPacket(boost::uint32_t transaction_id, boost::uint16_t protocol_version,
             const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
@@ -799,7 +799,7 @@ namespace protocol
             end_point = endpoint_;
         }
 
-        CloseSNSessionPacket()
+        CloseSessionPacket()
         {
         }
 
@@ -827,7 +827,7 @@ namespace protocol
         handler.template register_packet<RIDInfoResponsePacket>();
         handler.template register_packet<ReportSpeedPacket>();
         handler.template register_packet<RequestSubPiecePacketFromSN>();
-        handler.template register_packet<CloseSNSessionPacket>();
+        handler.template register_packet<CloseSessionPacket>();
     }
 }
 
