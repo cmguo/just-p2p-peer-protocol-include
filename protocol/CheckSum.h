@@ -1,3 +1,5 @@
+#ifndef __PPLIVE_CHECKSUM_H_CK_20111122__
+#define __PPLIVE_CHECKSUM_H_CK_20111122__
 template <typename ConstBufferSequence>
 inline boost::uint32_t check_sum_old(
                                   ConstBufferSequence const & buffers)
@@ -85,3 +87,4 @@ inline boost::uint32_t check_sum_new(
     crc ^= ((crc >> 13) ^ (last_byte & 0xFF) ^ (crc << 7));
     return framework::system::BytesOrder::host_to_little_endian_long(crc);
 }
+#endif
