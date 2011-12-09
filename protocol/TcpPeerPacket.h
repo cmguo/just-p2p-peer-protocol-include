@@ -234,6 +234,29 @@ namespace protocol
             PacketAction = 0xB6;
         }
     };
+
+    // herain:这个报文比较特殊，不是远端播放器发送给内核的，而是本地播放器有插播放时发送给内核的
+    struct TcpReportStatusPacket
+        : PacketT<0xD0>
+        , TcpCommonPacket
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            TcpCommonPacket::serialize(ar);
+
+            ar & resource_id_;
+            ar & rest_play_time_in_seconds_;
+        }
+
+        TcpReportStatusPacket()
+        {
+
+        }
+
+        RID resource_id_;
+        boost::uint16_t rest_play_time_in_seconds_;
+    };
 }
 
 #endif
