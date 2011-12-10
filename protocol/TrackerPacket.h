@@ -63,18 +63,31 @@ namespace protocol
 
         }
 
-        // response
         ListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            RID resource_id,
-            std::vector<CandidatePeerInfo> candidate_peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID& resource_id,
+            const std::vector<CandidatePeerInfo>& candidate_peer_info,
+            const boost::asio::ip::udp::endpoint& endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
             response.resource_id_ = resource_id;
-            response.peer_infos_ = candidate_peer_info;
+            response.peer_infos_=candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        //这个构造函数需要另外设置peer_infos_
+        ListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const RID& resource_id,            
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;           
             end_point = endpoint_;
             IsRequest = 0;
         }
@@ -794,14 +807,27 @@ namespace protocol
         ListTcpPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            RID resource_id,
-            std::vector<CandidatePeerInfo> candidate_peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID& resource_id,
+            const std::vector<CandidatePeerInfo>& candidate_peer_info,
+            const boost::asio::ip::udp::endpoint& endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
             response.resource_id_ = resource_id;
             response.peer_infos_ = candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+        ListTcpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const RID& resource_id,            
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;
+            //response.peer_infos_ = candidate_peer_info;
             end_point = endpoint_;
             IsRequest = 0;
         }
@@ -867,14 +893,27 @@ namespace protocol
         ListWithIpPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            RID resource_id,
-            std::vector<CandidatePeerInfo> candidate_peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID& resource_id,
+            const std::vector<CandidatePeerInfo>& candidate_peer_info,
+            const boost::asio::ip::udp::endpoint& endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
             response.resource_id_ = resource_id;
             response.peer_infos_ = candidate_peer_info;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        ListWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const RID& resource_id,            
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;            
             end_point = endpoint_;
             IsRequest = 0;
         }
@@ -940,9 +979,9 @@ namespace protocol
         ListTcpWithIpPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            RID resource_id,
-            std::vector<CandidatePeerInfo> candidate_peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID& resource_id,
+            const std::vector<CandidatePeerInfo>& candidate_peer_info,
+            const boost::asio::ip::udp::endpoint& endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -951,6 +990,20 @@ namespace protocol
             end_point = endpoint_;
             IsRequest = 0;
         }
+        ListTcpWithIpPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const RID& resource_id,           
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.resource_id_ = resource_id;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+
 
         struct Request {
             RID resource_id_;
