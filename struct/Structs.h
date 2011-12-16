@@ -900,6 +900,21 @@ namespace protocol
             return ip_ == info.ip_ && port_ == info.port_ && priority_ == info.priority_;
         }
 
+        friend bool operator < (const SuperNodeInfo& lhs, const SuperNodeInfo& rhs)
+        {
+            if (lhs.ip_ != rhs.ip_)
+            {
+                return lhs.ip_ < rhs.ip_;
+            }
+
+            if (lhs.port_ != rhs.port_)
+            {
+                return lhs.port_ < rhs.port_;
+            }
+
+            return lhs.priority_ < rhs.priority_;
+        }
+
         template <typename Archive>
         void serialize(Archive & ar)
         {
