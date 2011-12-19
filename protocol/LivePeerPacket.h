@@ -67,8 +67,8 @@ namespace protocol
     {
         boost::uint16_t block_info_count_;
         boost::uint16_t live_interval_;
-        std::map<boost::uint32_t, boost::dynamic_bitset<boost::uint8_t> > subpiece_map_;
-        std::map<boost::uint32_t, boost::uint16_t> subpiece_nos_;
+        std::map<boost::uint32_t, boost::dynamic_bitset<boost::uint8_t> > subpiece_map_;//block_id  每16个subpiece是否有
+        std::map<boost::uint32_t, boost::uint16_t> subpiece_nos_; //block_id  有多少个subpiece
         boost::uint32_t request_block_id_;
     };
 
