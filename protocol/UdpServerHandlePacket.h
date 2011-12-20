@@ -51,12 +51,12 @@ namespace protocol
         PacketType const & packet,
         boost::uint16_t dest_protocol_version)
     {
-        UdpBuffer send_buffer;
+        boost::shared_ptr<UdpBuffer> send_buffer = boost::shared_ptr<UdpBuffer>(new UdpBuffer());
 
         assert(boost::asio::ip::udp::endpoint() != packet.end_point);
-        send_buffer.end_point(packet.end_point);
-        send_buffer.commit(sizeof(uint32_t));
-        OUdpArchive oa(send_buffer);
+        send_buffer->end_point(packet.end_point);
+        send_buffer->commit(sizeof(uint32_t));
+        OUdpArchive oa(*send_buffer);
         boost::uint8_t action = PacketType::Action;
         oa << action << packet;
         if (oa)

@@ -72,8 +72,11 @@ namespace protocol
             UdpBuffer & recv_buffer);
 
         void UdpSendTo(
-            const UdpBuffer & send_buffer,
+            boost::shared_ptr<UdpBuffer> send_buffer,
             boost::uint16_t dest_protocol_version);
+
+        void HandleUdpSendTo(const boost::system::error_code & error,
+            uint32_t bytes_transferred, boost::shared_ptr<UdpBuffer> send_buffer);
 
         void HandleUdpRecvFrom(
             const boost::system::error_code & error,
