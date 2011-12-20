@@ -479,6 +479,7 @@ namespace protocol
         static const boost::uint16_t INVALID_PRIORITY = 0xFFFF;
         static const boost::uint16_t PUSH_PRIORITY = 100;
         static const boost::uint16_t DEFAULT_PRIORITY = 50;
+        static const boost::uint16_t PRIORITY_VIP = 9;
         static const boost::uint16_t PRIORITY_10 = 10;
         static const boost::uint16_t PRIORITY_20 = 20;
         static const boost::uint16_t PRIORITY_30 = 30;
