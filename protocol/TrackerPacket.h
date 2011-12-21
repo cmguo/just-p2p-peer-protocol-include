@@ -17,10 +17,18 @@
 
 namespace protocol
 {
+    //查询guid对应的tracker分组的算法
+    inline uint32_t GetGuidMod(const Guid& guid, uint32_t mod)
+    {
+        boost::uint64_t buf[2];
+        memcpy(&buf, &guid.data(), sizeof(guid.data()));
+        buf[1] = framework::system::BytesOrder::little_endian_to_host_longlong(buf[1]);
+        return static_cast<uint32_t> (buf[1] % mod);
+    }
+
     /**
     *@brief Peer发向TrackerServer的 List 包和TrackerServer回给Peer的 List 包
     */
-
     struct ListPacket
         : public ServerPacketT<0x31>
     {
