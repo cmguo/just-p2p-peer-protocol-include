@@ -71,8 +71,12 @@ namespace protocol
         void UdpRecvFrom(
             UdpBuffer & recv_buffer);
 
-        void UdpSendTo(
+        void UdpAsyncSendTo(
             boost::shared_ptr<UdpBuffer> send_buffer,
+            boost::uint16_t dest_protocol_version);
+
+        void UdpSendTo(
+            const UdpBuffer & send_buffer,
             boost::uint16_t dest_protocol_version);
 
         void HandleUdpSendTo(const boost::system::error_code & error,
@@ -96,6 +100,8 @@ namespace protocol
 
         bool verify_check_sum(UdpBuffer & buffer, boost::uint32_t chk_sum,
             boost::uint16_t protocol_version);
+
+        void AddCheckSum(boost::asio::const_buffers_3& buffers, boost::uint16_t dest_protocol_version);
 
         IUdpServerListener::p handler_;
         boost::uint16_t port_;

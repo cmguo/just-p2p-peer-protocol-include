@@ -51,17 +51,26 @@ namespace protocol
         PacketType const & packet,
         boost::uint16_t dest_protocol_version)
     {
-        boost::shared_ptr<UdpBuffer> send_buffer = boost::shared_ptr<UdpBuffer>(new UdpBuffer());
+#ifndef BOOST_WINDOWS_API
+        boost::shared_ptr<UdpBuffer> send_buffer_pointer = boost::shared_ptr<UdpBuffer>(new UdpBuffer());
+        UdpBuffer& send_buffer = *send_buffer_pointer;
+#else
+        UdpBuffer send_buffer;
+#endif
 
         assert(boost::asio::ip::udp::endpoint() != packet.end_point);
-        send_buffer->end_point(packet.end_point);
-        send_buffer->commit(sizeof(uint32_t));
-        OUdpArchive oa(*send_buffer);
+        send_buffer.end_point(packet.end_point);
+        send_buffer.commit(sizeof(uint32_t));
+        OUdpArchive oa(send_buffer);
         boost::uint8_t action = PacketType::Action;
         oa << action << packet;
         if (oa)
         {
+#ifndef BOOST_WINDOWS_API
+            UdpAsyncSendTo(send_buffer_pointer, dest_protocol_version);
+#else
             UdpSendTo(send_buffer, dest_protocol_version);
+#endif
         }
         return oa;
     }
