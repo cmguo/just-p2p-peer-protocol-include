@@ -51,7 +51,7 @@ namespace protocol
         PacketType const & packet,
         boost::uint16_t dest_protocol_version)
     {
-#ifndef BOOST_WINDOWS_API
+#ifdef BOOST_WINDOWS_API
         boost::shared_ptr<UdpBuffer> send_buffer_pointer = boost::shared_ptr<UdpBuffer>(new UdpBuffer());
         UdpBuffer& send_buffer = *send_buffer_pointer;
 #else
@@ -66,7 +66,7 @@ namespace protocol
         oa << action << packet;
         if (oa)
         {
-#ifndef BOOST_WINDOWS_API
+#ifdef BOOST_WINDOWS_API
             UdpAsyncSendTo(send_buffer_pointer, dest_protocol_version);
 #else
             UdpSendTo(send_buffer, dest_protocol_version);
