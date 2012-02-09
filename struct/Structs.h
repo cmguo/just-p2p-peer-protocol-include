@@ -921,6 +921,28 @@ namespace protocol
             ar & ip_ & port_ & priority_;
         }
     };
+
+    struct VersionInfoEx {
+        boost::uint16_t Major;
+        boost::uint16_t Minor;
+        boost::uint16_t Micro;
+        boost::uint16_t Extra;
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ar & Major & Minor & Micro & Extra;
+        }
+
+        VersionInfoEx()
+        {
+            memset(this, 0, sizeof(VersionInfoEx));
+        }
+
+        VersionInfoEx(boost::uint16_t major, boost::uint16_t minor, boost::uint16_t micro, boost::uint16_t extra)
+            : Major(major), Minor(minor), Micro(micro), Extra(extra)
+        {}
+    };
 }
 
 #endif
