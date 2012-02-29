@@ -364,12 +364,7 @@ namespace protocol
             CommonPeerPacket::serialize(ar);
             ar & sub_piece_info_;
             ar & sub_piece_length_ ;
-
-            for (size_t i = 0 ; i < sub_piece_length_ ; i++)
-            {
-                ar & *(sub_piece_content_->get_buffer() + i);
-            }
-
+            ar & framework::container::make_array(sub_piece_content_->get_buffer(), sub_piece_length_);
         }
 
         virtual boost::uint32_t length() const
