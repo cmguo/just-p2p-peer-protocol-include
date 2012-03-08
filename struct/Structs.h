@@ -143,6 +143,11 @@ namespace protocol
         {
             return Type == LIVE_UDPSERVER_TRACKER;
         }
+
+        boost::uint32_t GetIP() const
+        {
+            return IP;
+        }
     };
 
     struct STUN_SERVER_INFO
@@ -165,6 +170,11 @@ namespace protocol
         bool operator < (const STUN_SERVER_INFO& n) const
         {
             return memcmp(this, &n, sizeof(STUN_SERVER_INFO)) < 0;
+        }
+
+        boost::uint32_t GetIP() const
+        {
+            return IP;
         }
     };
 
@@ -919,6 +929,11 @@ namespace protocol
         void serialize(Archive & ar)
         {
             ar & ip_ & port_ & priority_;
+        }
+
+        boost::uint32_t GetIP() const
+        {
+            return ip_;
         }
     };
 
