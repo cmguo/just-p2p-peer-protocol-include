@@ -309,10 +309,10 @@ namespace protocol
     //////////////////////////////////////////////////////////////////////////
     // RREQUEST_DATACOLLECTION_PACKET
     struct VERSION_INFO {
-        boost::uint8_t Major;
-        boost::uint8_t Minor;
-        boost::uint8_t Micro;
-        boost::uint8_t Extra;
+        boost::uint16_t Major;
+        boost::uint16_t Minor;
+        boost::uint16_t Micro;
+        boost::uint16_t Extra;
 
         template <typename Archive>
         void serialize(Archive & ar)
@@ -321,7 +321,7 @@ namespace protocol
         }
 
         VERSION_INFO() { memset(this, 0, sizeof(VERSION_INFO)); }
-        VERSION_INFO(boost::uint8_t major, boost::uint8_t minor, boost::uint8_t micro, boost::uint8_t extra)
+        VERSION_INFO(boost::uint16_t major, boost::uint16_t minor, boost::uint16_t micro, boost::uint16_t extra)
             : Major(major), Minor(minor), Micro(micro), Extra(extra)
         {}
     };
@@ -935,28 +935,6 @@ namespace protocol
         {
             return ip_;
         }
-    };
-
-    struct VersionInfoEx {
-        boost::uint16_t Major;
-        boost::uint16_t Minor;
-        boost::uint16_t Micro;
-        boost::uint16_t Extra;
-
-        template <typename Archive>
-        void serialize(Archive & ar)
-        {
-            ar & Major & Minor & Micro & Extra;
-        }
-
-        VersionInfoEx()
-        {
-            memset(this, 0, sizeof(VersionInfoEx));
-        }
-
-        VersionInfoEx(boost::uint16_t major, boost::uint16_t minor, boost::uint16_t micro, boost::uint16_t extra)
-            : Major(major), Minor(minor), Micro(micro), Extra(extra)
-        {}
     };
 }
 
