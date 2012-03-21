@@ -345,6 +345,7 @@ namespace protocol
             boost::uint16_t udp_port,
             boost::uint32_t stun_peer_ip,
             boost::uint16_t stun_peer_udpport,
+            boost::uint32_t stun_detected_ip,
             boost::uint16_t stun_detected_udp_port,
             std::vector<boost::uint32_t> real_ips,
             std::vector<REPORT_RESOURCE_STRUCT> resource_ids,
@@ -368,6 +369,7 @@ namespace protocol
             request.upnp_tcp_port_ = upnp_tcp_port;
             request.stun_peer_ip_ = stun_peer_ip;
             request.stun_peer_udp_port_ = stun_peer_udpport;
+            request.stun_detected_ip_ = stun_detected_ip;
             request.stun_detected_udp_port_ = stun_detected_udp_port;
             request.real_ips_ = real_ips;
             request.resource_ids_ = resource_ids;
@@ -435,6 +437,16 @@ namespace protocol
 
                 ar & util::serialization::make_sized<boost::uint8_t>(request.real_ips_);
                 ar & util::serialization::make_sized<boost::uint8_t>(request.resource_ids_);
+
+                if (Archive::is_loading::value && peer_version_ < PEER_VERSION_V11)
+                {
+                    request.stun_detected_ip_ = 0;
+                }
+                else
+                {
+                    ar & request.stun_detected_ip_;
+                }
+
             }else{
                 ar & response.keep_alive_interval_;
                 ar & response.detected_ip_;
@@ -462,6 +474,7 @@ namespace protocol
             boost::int32_t upload_speed_kbs_;     // 当前上传速度
             std::vector<boost::uint32_t> real_ips_;
             std::vector<REPORT_RESOURCE_STRUCT> resource_ids_;
+            boost::uint32_t stun_detected_ip_;
 
         } request;
         struct Response {
