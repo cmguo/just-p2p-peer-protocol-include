@@ -625,16 +625,20 @@ namespace protocol
     };
 
     struct InternalCommandPacket
-        : Packet
-        , PacketT<0x38>
+//        : Packet
+//        , PacketT<0x38>
+          : public ServerPacketT<0x38>
     {
         template <typename Archive>
         void serialize(Archive & ar)
         {
-            Packet::serialize(ar);
-            ar & magic_number_;
-            ar & command_id_;
-            ar & reserved_;
+            ServerPacket::serialize(ar);
+            if(IsRequest)
+            {
+                ar & magic_number_;
+                ar & command_id_;
+                ar & reserved_;
+            }
         }
 
         InternalCommandPacket()
@@ -653,6 +657,18 @@ namespace protocol
             command_id_ = command_id;
             end_point = endpoint_;
             reserved_ = 0;
+            IsRequest = 1;
+        }
+
+        InternalCommandPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            end_point = endpoint_;
+            IsRequest = 0;
         }
 
         boost::uint16_t magic_number_;
