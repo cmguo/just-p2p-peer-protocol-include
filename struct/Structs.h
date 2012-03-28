@@ -369,6 +369,9 @@ namespace protocol
 #define INTERNAL_COMMAND_MAGIC_NUMBER 21337
 #define INTERNAL_COMMAND_INTERVAL     30
 
+#define ENABLE_PRINT_RID_PEER_STATISTIC 1002
+#define DISABLE_PRINT_RID_PEER_STATISTIC 1003
+
     //////////////////////////////////////////////////////////////////////////
     // Data On App STop
     struct DATA_ONAPPSTOP_INFO
