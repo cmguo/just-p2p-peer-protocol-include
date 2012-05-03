@@ -18,6 +18,7 @@ namespace protocol
         string url_;
         string refer_url_;
         string identifier_;
+        string user_agent_;
 
         UrlInfo()
             : type_(0)
