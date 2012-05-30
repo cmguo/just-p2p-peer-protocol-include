@@ -414,24 +414,6 @@ namespace protocol
         PLATFORM_INFO() { memset(this, 0xFF, sizeof(PLATFORM_INFO)); }
     };
 
-
-    struct ACTION_COUNT_INFO
-    {
-        static uint32_t const ACTION_NUMBER = 15;
-        uint32_t ActionCount[ACTION_NUMBER * 2];
-
-        template <typename Archive>
-        void serialize(Archive & ar)
-        {
-            ar&framework::container::make_array(ActionCount, ACTION_NUMBER * 2);
-        }
-
-        ACTION_COUNT_INFO()
-        {
-            memset(this, 0xFF, sizeof(ACTION_COUNT_INFO));
-        }
-    };
-
     //////////////////////////////////////////////////////////////////////////
     // Data On Download Stop
     struct PLAY_STOP_INFO
