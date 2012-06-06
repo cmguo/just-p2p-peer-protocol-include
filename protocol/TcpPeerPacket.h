@@ -257,6 +257,52 @@ namespace protocol
         RID resource_id_;
         boost::uint16_t rest_play_time_in_seconds_;
     };
+
+    struct TcpStartDownloadPacket
+        : PacketT<0xD6>
+        , TcpCommonPacket
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            TcpCommonPacket::serialize(ar);
+
+            ar & util::serialization::make_sized<boost::uint16_t>(download_url_);
+            ar & util::serialization::make_sized<boost::uint16_t>(refer_url_);
+            ar & util::serialization::make_sized<boost::uint16_t>(user_agent_);
+            ar & util::serialization::make_sized<boost::uint16_t>(filename_);
+        }
+
+        TcpStartDownloadPacket()
+        {
+
+        }
+
+        string download_url_;
+        string refer_url_;
+        string user_agent_;
+        string filename_;
+    };
+
+    struct TcpStopDownLoadPacket
+        : TcpCommonPacket
+        , PacketT<0xD7>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            TcpCommonPacket::serialize(ar);
+
+            ar & util::serialization::make_sized<boost::uint16_t>(stop_url_);
+        }
+
+        TcpStopDownLoadPacket()
+        {
+
+        }
+
+        string stop_url_;
+    };
 }
 
 #endif
