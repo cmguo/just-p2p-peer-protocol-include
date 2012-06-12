@@ -319,6 +319,11 @@ namespace protocol
             setg(head_buffer_, head_buffer_, head_buffer_);
         }
 
+        boost::uint8_t * GetHeadBuffer()
+        {
+            return head_buffer_;
+        }
+
     protected:
         boost::uint8_t * sub_piece_buffer()
         {

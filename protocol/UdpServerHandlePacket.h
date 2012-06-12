@@ -34,6 +34,11 @@ namespace protocol
         IUdpArchive ia(recv_buffer);
         PacketType packet;
         packet.end_point = recv_buffer.end_point();
+
+        // backup 52 bytes
+        boost::uint8_t buffer[52] = {0};
+        memcpy(buffer, recv_buffer.GetHeadBuffer(), 52);
+
         ((protocol::Packet &)packet).PacketAction = PacketType::Action;
         ia >> packet;
         if (ia) 

@@ -33,6 +33,11 @@ namespace protocol
         uint32_t bitmap_size , byte_num;
         boost::uint8_t buf[32];
         ar & bitmap_size;
+        if (bitmap_size > 32*8)
+        {
+            // add some security check to prevent crash
+            bitmap_size = 0;
+        }
         byte_num = (bitmap_size + 7)/8;
         ar & framework::container::make_array(buf, byte_num);
         t = protocol::BlockMap(buf, byte_num, bitmap_size);
@@ -45,6 +50,11 @@ namespace protocol
         boost::uint8_t buf[32];
         boost::uint8_t * p = buf;
         bitset_size = t.GetCount();
+        if (bitset_size > 32*8)
+        {
+            // add some security check to prevent crash
+            bitset_size = 0;
+        }
         t.GetBytes(p);
         byte_num = (bitset_size + 7)/8;
         ar & bitset_size;

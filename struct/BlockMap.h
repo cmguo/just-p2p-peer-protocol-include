@@ -26,23 +26,16 @@ namespace protocol
             uint32_t bytes_num,
             uint32_t bits_num)
         {
-            try
+            if (inbuf == NULL)
             {
-                if (inbuf == NULL)
-                {
-                    bitset_.resize(bits_num, false);
-                }
-                for (uint32_t i = 0;i<bytes_num;i++)
-                {
-                    bitset_.append(inbuf[i]);
-                }
-                if (bits_num>0)
-                    bitset_.resize(bits_num);
+                bitset_.resize(bits_num, false);
             }
-            catch(...)
+            for (uint32_t i = 0;i<bytes_num;i++)
             {
-
+                bitset_.append(inbuf[i]);
             }
+            if (bits_num>0)
+                bitset_.resize(bits_num);
         };
 
         typedef boost::shared_ptr<BlockMap> p;
