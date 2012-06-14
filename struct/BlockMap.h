@@ -7,6 +7,9 @@
 
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <iostream>
+#ifdef DUMP_OBJECT
+#include "../../../peer/count_object_allocate.h"
+#endif
 
 namespace protocol
 {

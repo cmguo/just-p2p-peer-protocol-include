@@ -1,6 +1,9 @@
 #ifndef _LIVE_PIECEINFOEX_H_
 #define _LIVE_PIECEINFOEX_H_
 
+#ifdef DUMP_OBJECT
+#include "../../../peer/count_object_allocate.h"
+#endif
 namespace protocol
 {
     struct LivePieceInfoEx

@@ -9,7 +9,7 @@
 
 #include "SubPieceContent.h"
 #ifdef DUMP_OBJECT
-#include "count_object_allocate.h"
+#include "../../../peer/count_object_allocate.h"
 #endif
 
 namespace protocol
