@@ -581,6 +581,71 @@ namespace protocol
         } response;
     };
 
+    struct QueryVipSnListPacket
+        : public ServerPacketT<0x28>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+            if (IsRequest)
+            {
+            }
+            else
+            {
+                ar & util::serialization::make_sized<boost::uint16_t>(response.super_node_infos_);
+            }
+        }
+
+        QueryVipSnListPacket()
+        {
+
+        }
+
+        // request
+        QueryVipSnListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t peer_version,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        QueryVipSnListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const std::vector<SuperNodeInfo>& super_node_infos,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.super_node_infos_ = super_node_infos;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        // response
+        QueryVipSnListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        struct Response
+        {
+            std::vector<SuperNodeInfo> super_node_infos_;
+        } response;
+    };
+
     template <typename PacketHandler>
     inline void register_bootstrap_packet(
         PacketHandler & handler)
@@ -593,6 +658,7 @@ namespace protocol
         handler.template register_packet<QueryLiveTrackerListPacket>();
         handler.template register_packet<QuerySnListPacket>();
         handler.template register_packet<QueryTrackerForListingPacket>();
+        handler.template register_packet<QueryVipSnListPacket>();
     }
 
 }
