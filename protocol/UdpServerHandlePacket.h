@@ -27,7 +27,6 @@ namespace protocol
             &UdpServer::handle_packet<PacketType>;
     }
 
-#pragma optimize("", off)
     template <typename PacketType>
     void UdpServer::handle_packet(
         UdpBuffer & recv_buffer)
@@ -51,7 +50,6 @@ namespace protocol
         //    assert(false);
         }
     }
-#pragma optimize("", on)
 
     template <typename PacketType>
     bool UdpServer::send_packet(
