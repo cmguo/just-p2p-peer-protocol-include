@@ -9,7 +9,7 @@
 
 #include <boost/asio/deadline_timer.hpp>
 
-#include <util/RefenceFromThis.h>
+#include <boost/enable_shared_from_this.hpp>
 #include <protocol/Protocol.h>
 #include <struct/UdpBuffer.h>
 
@@ -17,7 +17,7 @@ namespace protocol
 {
     struct IUdpServerListener
     {
-        typedef IUdpServerListener * p;
+        typedef boost::shared_ptr<IUdpServerListener> p;
 
         virtual void OnUdpRecv(
             protocol::Packet const & packet) = 0;
@@ -29,7 +29,7 @@ namespace protocol
 
     class UdpServer
         : boost::asio::ip::udp::socket
-        , public util::RefenceFromThis<UdpServer>
+        , public boost::enable_shared_from_this<UdpServer>
     {
     public:
         UdpServer(
