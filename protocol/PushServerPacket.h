@@ -101,9 +101,6 @@ namespace protocol
             uint32_t used_disk_size_;
             uint32_t upload_bandwidth_kbs_;
             uint32_t avg_upload_speed_kbs_;
-            uint32_t total_disk_size_;
-            uint32_t online_percent_;// 0 - 100
-            uint32_t nat_type_;
         } request;
         struct Response {
             RidInfo rid_info_;
