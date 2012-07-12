@@ -157,6 +157,112 @@ namespace protocol
     {
         handler.template register_packet<QueryPushTaskPacketV2>();
     }
+
+    struct QueryPushTaskPacketV3
+        : public ServerPacketT<0x1D>
+    {
+        enum error_code
+        {
+            NO_TASK = 1,
+        };
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+            if (IsRequest) 
+            {
+                ar & request.peer_guid_;
+                ar & request.used_disk_size_;
+                ar & request.upload_bandwidth_kbs_;
+                ar & request.avg_upload_speed_kbs_;
+                ar & request.total_disk_size_;
+                ar & request.online_percent_;
+                ar & request.nat_type_;
+				ar & request.play_history_vec_;
+            }
+            else 
+            {
+                if(error_code_ == 0)
+                {
+					ar & response.push_task_vec_;
+                    ar & response.response_push_task_param_;
+                }
+                else if (error_code_ == NO_TASK)
+                {
+                    ar & response.push_wait_interval_in_sec_;
+                }
+            }
+        }
+
+        QueryPushTaskPacketV3() {}
+
+        // request
+        QueryPushTaskPacketV3(boost::uint32_t transaction_id, const Guid& peer_guid, boost::asio::ip::udp::endpoint 
+            endpoint_, uint32_t used_disk_size, uint32_t upload_bandwidth_kbs, uint32_t avg_upload_speed_kbs, 
+            uint32_t total_disk_size, uint32_t online_percent, uint32_t nat_type)
+        {
+            transaction_id_ = transaction_id;
+            request.peer_guid_ = peer_guid;
+            end_point = endpoint_;
+
+            request.used_disk_size_ = used_disk_size;
+            request.upload_bandwidth_kbs_ = upload_bandwidth_kbs;
+            request.avg_upload_speed_kbs_ = avg_upload_speed_kbs;
+            request.total_disk_size_ = total_disk_size;
+            request.online_percent_ = online_percent;
+            request.nat_type_ = nat_type;
+            IsRequest = 1;
+        }
+
+        // response
+        QueryPushTaskPacketV3(boost::uint32_t transaction_id, const PUSH_TASK_PARAM& push_param, boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            end_point = endpoint_;
+
+            error_code_ = 0;
+            IsRequest = 0;
+
+            response.response_push_task_param_ = push_param;  
+        }
+
+        QueryPushTaskPacketV3(boost::uint32_t transaction_id, boost::uint8_t errorcode, 
+            boost::int32_t push_wait_interval_in_sec, boost::asio::ip::udp::endpoint endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            end_point = endpoint_;
+
+            error_code_ = errorcode;
+            IsRequest = 0;
+
+            response.push_wait_interval_in_sec_ = push_wait_interval_in_sec;
+        }
+
+        struct Request {
+            Guid peer_guid_;
+            uint32_t used_disk_size_;
+            uint32_t upload_bandwidth_kbs_;
+            uint32_t avg_upload_speed_kbs_;
+            uint32_t total_disk_size_;
+            uint32_t online_percent_;
+            uint32_t nat_type_;
+			std::vector<PlayHistoryItem> play_history_vec_;
+        } request;
+
+        struct Response {
+			std::vector<PushTaskItem> push_task_vec_;
+            PUSH_TASK_PARAM response_push_task_param_;
+            boost::int32_t push_wait_interval_in_sec_;
+        } response;
+    };
+
+    template <typename PacketHandler>
+    void register_push_packetv3(
+        PacketHandler & handler)
+    {
+        handler.template register_packet<QueryPushTaskPacketV3>();
+    }
 }
 
 #endif  // _PROTOCOL_PUSH_SERVER_PACKET_H_
