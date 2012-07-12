@@ -13,14 +13,6 @@
 
 namespace protocol
 {
-
-    enum Rid_From
-    {
-        RID_BY_URL,
-        RID_BY_CONTENT,
-        RID_BY_PLAY_URL
-    };
-
     struct TrackerInfo
     {
         string mod_;
