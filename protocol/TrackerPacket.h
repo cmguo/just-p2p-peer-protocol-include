@@ -56,10 +56,10 @@ namespace protocol
         ListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            RID resource_id,
-            Guid peer_guid,
+            const RID & resource_id,
+            const Guid & peer_guid,
             boost::uint16_t request_peer_count,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -74,9 +74,9 @@ namespace protocol
         ListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            const RID& resource_id,
-            const std::vector<CandidatePeerInfo>& candidate_peer_info,
-            const boost::asio::ip::udp::endpoint& endpoint_)
+            const RID & resource_id,
+            const std::vector<CandidatePeerInfo> & candidate_peer_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -120,8 +120,8 @@ namespace protocol
         LeavePacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -158,7 +158,7 @@ namespace protocol
         ReportPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
+            const Guid & peer_guid,
             boost::uint16_t local_resource_count,
             boost::uint16_t server_resource_count,
             boost::uint16_t udp_port,
@@ -166,15 +166,15 @@ namespace protocol
             boost::uint16_t stun_peer_udpport,
             boost::uint32_t stun_detected_ip,
             boost::uint16_t stun_detected_udp_port,
-            std::vector<boost::uint32_t> real_ips,
-            std::vector<REPORT_RESOURCE_STRUCT> resource_ids,
+            const std::vector<boost::uint32_t> & real_ips,
+            const std::vector<REPORT_RESOURCE_STRUCT> & resource_ids,
             boost::uint8_t nat_type,
             boost::uint8_t upload_priority,
             boost::uint8_t idle_time_in_mins,
             boost::int32_t upload_bandwidth_kbs,
             boost::int32_t upload_limit_kbs,
             boost::int32_t upload_speed_kbs,
-            boost::asio::ip::udp::endpoint endpoint_,
+            const boost::asio::ip::udp::endpoint & endpoint_,
             boost::uint16_t internal_tcp_port = 0,
             boost::uint16_t upnp_tcp_port = 0)
         {
@@ -209,7 +209,7 @@ namespace protocol
             boost::uint32_t detected_ip,
             boost::uint16_t detected_udp_port,
             boost::uint16_t resource_count,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -333,8 +333,8 @@ namespace protocol
         QueryPeerCountPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid resource_id,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & resource_id,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -347,9 +347,9 @@ namespace protocol
         QueryPeerCountPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            Guid resource_id,
+            const Guid & resource_id,
             boost::uint32_t peer_count,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -395,7 +395,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint16_t magic_number,
             boost::uint16_t command_id,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             magic_number_ = magic_number;
@@ -570,10 +570,10 @@ namespace protocol
         ListTcpPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            RID resource_id,
-            Guid peer_guid,
+            const RID & resource_id,
+            const Guid & peer_guid,
             boost::uint16_t request_peer_count,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -655,11 +655,11 @@ namespace protocol
         ListWithIpPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            RID resource_id,
-            Guid peer_guid,
+            const RID & resource_id,
+            const Guid & peer_guid,
             boost::uint16_t request_peer_count,
             boost::uint32_t reqest_ip,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -741,11 +741,11 @@ namespace protocol
         ListTcpWithIpPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            RID resource_id,
-            Guid peer_guid,
+            const RID & resource_id,
+            const Guid & peer_guid,
             boost::uint16_t request_peer_count,
             boost::uint32_t reqest_ip,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;

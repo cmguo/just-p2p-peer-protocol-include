@@ -132,7 +132,7 @@ namespace protocol
         }
 
         template <typename PeerPacketType>
-        ErrorPacket(PeerPacketType const &packet)
+        ErrorPacket(const PeerPacketType const &packet)
         {
             transaction_id_ = packet.transaction_id_;
             resource_id_ = packet.resource_id_;
@@ -142,8 +142,9 @@ namespace protocol
             // PacketAction = Action;
         }
 
-        ErrorPacket(boost::uint32_t transaction_id, RID rid, Guid peer_guid,
-            boost::uint16_t error_code, boost::uint16_t error_info_length, string error_info, boost::asio::ip::udp::endpoint endpoint_)
+        ErrorPacket(boost::uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
+            boost::uint16_t error_code, boost::uint16_t error_info_length, const string & error_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -202,9 +203,10 @@ namespace protocol
         }
 
         ConnectPacket(boost::uint32_t transaction_id,
-            RID rid, Guid peer_guid, boost::uint16_t protocol_version,
+            const RID & rid, const Guid & peer_guid, boost::uint16_t protocol_version,
             boost::uint8_t basic_info, boost::uint32_t send_off_time, boost::uint32_t peer_version,
-            CandidatePeerInfo peer_info, boost::uint8_t connect_type, PEER_DOWNLOAD_INFO download_info, boost::asio::ip::udp::endpoint endpoint_, boost::uint16_t ip_pool_size = 0)
+            const CandidatePeerInfo & peer_info, boost::uint8_t connect_type, const PEER_DOWNLOAD_INFO & download_info,
+            const boost::asio::ip::udp::endpoint & endpoint_, boost::uint16_t ip_pool_size = 0)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -254,7 +256,8 @@ namespace protocol
             VodPeerPacket::serialize(ar);
         }
 
-        RequestAnnouncePacket(boost::uint32_t transaction_id, RID rid, Guid peer_guid, boost::asio::ip::udp::endpoint endpoint_)
+        RequestAnnouncePacket(boost::uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -287,9 +290,9 @@ namespace protocol
             ar & block_map_;
         }
 
-        AnnouncePacket(uint32_t transaction_id, RID rid, Guid peer_guid,
-            PEER_DOWNLOAD_INFO peer_download_info, BlockMap block_map,
-            boost::asio::ip::udp::endpoint endpoint_)
+        AnnouncePacket(uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
+            const PEER_DOWNLOAD_INFO & peer_download_info, const BlockMap & block_map,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -346,10 +349,10 @@ namespace protocol
 
         RequestSubPiecePacketOld(
             boost::uint32_t  transaction_id,
-            RID rid,
-            Guid peer_guid,
-            std::vector<SubPieceInfo> sub_piece_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID & rid,
+            const Guid & peer_guid,
+            const std::vector<SubPieceInfo> & sub_piece_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -361,10 +364,10 @@ namespace protocol
 
         RequestSubPiecePacketOld(
             boost::uint32_t  transaction_id,
-            RID rid,
-            Guid peer_guid,
-            SubPieceInfo const & sub_piece_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID & rid,
+            const Guid & peer_guid,
+            const SubPieceInfo const & sub_piece_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -435,9 +438,9 @@ namespace protocol
 
         RequestSubPiecePacket(
             boost::uint32_t  transaction_id,
-            RID rid,
-            std::vector<SubPieceInfo> sub_piece_info,
-            boost::asio::ip::udp::endpoint endpoint_,
+            const RID & rid,
+            const std::vector<SubPieceInfo> & sub_piece_info,
+            const boost::asio::ip::udp::endpoint & endpoint_,
             boost::uint16_t priority,
             boost::uint16_t reserve = 0)
         {
@@ -453,9 +456,9 @@ namespace protocol
 
         RequestSubPiecePacket(
             boost::uint32_t  transaction_id,
-            RID rid,
-            SubPieceInfo const & sub_piece_info,
-            boost::asio::ip::udp::endpoint endpoint_,
+            const RID & rid,
+            const SubPieceInfo const & sub_piece_info,
+            const boost::asio::ip::udp::endpoint & endpoint_,
             boost::uint16_t priority,
             boost::uint16_t reserve = 0)
         {
@@ -500,12 +503,12 @@ namespace protocol
 
         SubPiecePacket(
             boost::uint32_t transaction_id,
-            RID rid,
-            Guid peer_guid,
-            SubPieceInfo sub_piece_info,
+            const RID & rid,
+            const Guid & peer_guid,
+            const SubPieceInfo & sub_piece_info,
             boost::uint16_t sub_piece_length,
-            SubPieceBuffer sub_piece_content,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const SubPieceBuffer & sub_piece_content,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -568,11 +571,11 @@ namespace protocol
 
         PeerExchangePacket(
             boost::uint32_t transaction_id,
-            RID rid,
-            Guid peer_guid,
+            const RID & rid,
+            const Guid & peer_guid,
             boost::uint8_t basic_info,
             std::vector<CandidatePeerInfo> & candidate_peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -608,9 +611,9 @@ namespace protocol
 
         RIDInfoRequestPacket(
             boost::uint32_t transaction_id,
-            RID rid,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const RID & rid,
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -650,9 +653,9 @@ namespace protocol
             }
         }
 
-        RIDInfoResponsePacket(boost::uint32_t transaction_id,  Guid peer_guid,
-            const RidInfo& rid_info, const PEER_COUNT_INFO& peer_count_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+        RIDInfoResponsePacket(boost::uint32_t transaction_id, const Guid & peer_guid,
+            const RidInfo & rid_info, const PEER_COUNT_INFO & peer_count_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;
@@ -700,8 +703,8 @@ namespace protocol
             ar & speed_;
         }
 
-        ReportSpeedPacket(boost::uint32_t transaction_id, RID rid, Guid peer_guid,
-            boost::uint32_t speed, boost::asio::ip::udp::endpoint endpoint_)
+        ReportSpeedPacket(boost::uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
+            boost::uint32_t speed, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;

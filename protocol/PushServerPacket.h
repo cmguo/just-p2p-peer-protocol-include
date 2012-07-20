@@ -55,7 +55,8 @@ namespace protocol
         QueryPushTaskPacket() {}
 
         // request
-        QueryPushTaskPacket(boost::uint32_t transaction_id, const Guid& peer_guid, boost::asio::ip::udp::endpoint endpoint_, 
+        QueryPushTaskPacket(boost::uint32_t transaction_id, const Guid& peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_, 
             uint32_t used_disk_size, uint32_t upload_bandwidth_kbs, uint32_t avg_upload_speed_kbs)
         {
             transaction_id_ = transaction_id;
@@ -69,8 +70,9 @@ namespace protocol
         }
 
         // response
-        QueryPushTaskPacket(boost::uint32_t transaction_id, const RidInfo& rid_info, const std::string& url, const std::string& refer_url,
-            const PUSH_TASK_PARAM& push_param, boost::asio::ip::udp::endpoint endpoint_)
+        QueryPushTaskPacket(boost::uint32_t transaction_id, const RidInfo& rid_info, const std::string& url,
+            const std::string& refer_url,
+            const PUSH_TASK_PARAM& push_param, boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;
@@ -85,7 +87,7 @@ namespace protocol
         }
 
         QueryPushTaskPacket(boost::uint32_t transaction_id, boost::uint8_t errorcode, 
-            boost::int32_t push_wait_interval_in_sec, boost::asio::ip::udp::endpoint endpoint_)
+            boost::int32_t push_wait_interval_in_sec, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;
@@ -116,8 +118,8 @@ namespace protocol
     {
         ReportPushTaskCompletedPacket(){}
 
-        ReportPushTaskCompletedPacket(boost::uint32_t transaction_id, Guid peer_guid, RidInfo rid_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+        ReportPushTaskCompletedPacket(boost::uint32_t transaction_id, const Guid & peer_guid, const RidInfo & rid_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;
@@ -128,8 +130,8 @@ namespace protocol
             request.rid_info_ = rid_info;            
         }
 
-        ReportPushTaskCompletedPacket(boost::uint32_t transaction_id, RidInfo rid_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+        ReportPushTaskCompletedPacket(boost::uint32_t transaction_id, const RidInfo & rid_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;

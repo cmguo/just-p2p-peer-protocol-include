@@ -41,10 +41,10 @@ namespace protocol
         QueryServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
+            const Guid & peer_guid,
             const REGION_INFO& region_info,
             const std::vector<SERVER_TYPE_INFO>& server_type_list,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -60,7 +60,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             const REGION_INFO& region_info,
             const std::vector<SERVER_LIST>& server_list,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
              response.region_info_ = region_info;
@@ -71,7 +71,7 @@ namespace protocol
         QueryServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -122,8 +122,8 @@ namespace protocol
         QueryTrackerListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -137,8 +137,8 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             boost::uint16_t tracker_group_count,
-            std::vector<TRACKER_INFO> tracker_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const std::vector<TRACKER_INFO> & tracker_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -186,7 +186,7 @@ namespace protocol
         QueryStunServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -198,8 +198,8 @@ namespace protocol
         QueryStunServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            std::vector<STUN_SERVER_INFO> stun_server_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const std::vector<STUN_SERVER_INFO> & stun_server_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -207,7 +207,7 @@ namespace protocol
             end_point = endpoint_;
             IsRequest = 0;
         }
-        QueryStunServerListPacket(std::vector<STUN_SERVER_INFO> stun_server_info, boost::asio::ip::udp::endpoint endpoint_)
+        QueryStunServerListPacket(std::vector<STUN_SERVER_INFO> & stun_server_info, boost::asio::ip::udp::endpoint & endpoint_)
         {
             QueryStunServerListPacket(0, 0, stun_server_info, endpoint_);
         }
@@ -251,8 +251,8 @@ namespace protocol
         QueryIndexServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -265,7 +265,7 @@ namespace protocol
         QueryIndexServerListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -276,7 +276,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             const std::vector<boost::uint8_t>& mod_index_map,
             const std::vector<INDEX_SERVER_INFO>& index_servers,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             assert(mod_index_map.size() == INDEX_LIST_MOD_COUNT);
             transaction_id_ = transaction_id;
@@ -331,7 +331,7 @@ namespace protocol
         // request
         QueryConfigStringPacket(
             boost::uint32_t transaction_id,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;
@@ -343,7 +343,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             const std::string & config_string,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -385,7 +385,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
             const Guid& peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -400,7 +400,7 @@ namespace protocol
             boost::uint8_t error_code,
             boost::uint16_t tracker_group_count,
             const std::vector<TRACKER_INFO>& tracker_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -444,7 +444,7 @@ namespace protocol
         QuerySnListPacket(
             boost::uint32_t transaction_id,
             boost::uint16_t peer_version,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -457,7 +457,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             const std::vector<SuperNodeInfo>& super_node_infos,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -470,7 +470,7 @@ namespace protocol
         QuerySnListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -606,7 +606,7 @@ namespace protocol
         QueryVipSnListPacket(
             boost::uint32_t transaction_id,
             boost::uint16_t peer_version,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -619,7 +619,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             const std::vector<SuperNodeInfo>& super_node_infos,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -632,7 +632,7 @@ namespace protocol
         QueryVipSnListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;

@@ -39,7 +39,7 @@ namespace protocol
         StunHandShakePacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -54,7 +54,7 @@ namespace protocol
             boost::uint16_t keepalive_interval,
             boost::uint32_t detected_ip,
             boost::uint16_t detected_udp_port,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -68,7 +68,7 @@ namespace protocol
             boost::uint16_t keepalive_interval,
             boost::uint32_t detected_ip,
             boost::uint16_t detected_udp_port,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             StunHandShakePacket(0, 0, keepalive_interval, detected_ip, detected_udp_port, endpoint_);
         }
@@ -100,7 +100,7 @@ namespace protocol
         StunKPLPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -144,15 +144,15 @@ namespace protocol
 
         StunInvokePacket(
             boost::uint32_t transaction_id,
-            RID resource_id,
-            Guid peer_guid,
+            const RID & resource_id,
+            const Guid & peer_guid,
             boost::uint32_t send_off_time,
-            CandidatePeerInfo peer_info_mine,
+            const CandidatePeerInfo & peer_info_mine,
             boost::uint8_t connect_type,
-            CandidatePeerInfo peer_info_his,
-            PEER_DOWNLOAD_INFO peer_download_info,
+            const CandidatePeerInfo & peer_info_his,
+            const PEER_DOWNLOAD_INFO & peer_download_info,
             boost::uint16_t ip_pool_size,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = resource_id;

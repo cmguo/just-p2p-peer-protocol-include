@@ -36,10 +36,10 @@ namespace protocol
         {
         }
 
-        JoinRequestPacket(boost::uint32_t transaction_id, Guid peer_guid,
+        JoinRequestPacket(boost::uint32_t transaction_id, const Guid & peer_guid,
             boost::uint32_t internal_ip, boost::uint16_t internal_port, boost::uint32_t detect_ip,
             boost::uint16_t detect_port, boost::uint32_t stun_ip, boost::uint16_t stun_port, boost::uint16_t nat_type,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;
@@ -83,9 +83,9 @@ namespace protocol
         JoinResponsePacket()
         {
         }
-        JoinResponsePacket(boost::uint32_t transaction_id, Guid peer_guid,
-            boost::uint8_t ret, std::vector<NodeInfo>& node_vec,
-            boost::asio::ip::udp::endpoint endpoint_)
+        JoinResponsePacket(boost::uint32_t transaction_id, const Guid & peer_guid,
+            boost::uint8_t ret, const std::vector<NodeInfo>& node_vec,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;
@@ -118,9 +118,9 @@ namespace protocol
         NotifyKeepAliveRequestPacket()
         {
         }
-        NotifyKeepAliveRequestPacket(boost::uint32_t transaction_id, Guid peer_guid,
-            boost::uint32_t peer_online, std::vector<TASK_INFO>& task_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+        NotifyKeepAliveRequestPacket(boost::uint32_t transaction_id, const Guid & peer_guid,
+            boost::uint32_t peer_online, const std::vector<TASK_INFO>& task_info,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;
@@ -149,7 +149,7 @@ namespace protocol
         NotifyKeepAliveResponsePacket()
         {
         }
-        NotifyKeepAliveResponsePacket(boost::uint32_t transaction_id, boost::asio::ip::udp::endpoint endpoint_)
+        NotifyKeepAliveResponsePacket(boost::uint32_t transaction_id, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = endpoint_;
@@ -176,8 +176,9 @@ namespace protocol
         NotifyRequestPacket()
         {
         }
-        NotifyRequestPacket(boost::uint32_t transaction_id, boost::uint32_t task_id, boost::uint16_t duration, boost::int32_t rest_time,
-            boost::uint16_t task_type, std::string buf, boost::asio::ip::udp::endpoint endpoint_)
+        NotifyRequestPacket(boost::uint32_t transaction_id, boost::uint32_t task_id, boost::uint16_t duration, 
+            boost::int32_t rest_time, boost::uint16_t task_type, const std::string & buf, 
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             task_id_ = task_id;
@@ -213,8 +214,8 @@ namespace protocol
         NotifyResponsePacket()
         {
         }
-        NotifyResponsePacket(boost::uint32_t transaction_id, Guid peer_guid, boost::uint32_t task_id,
-            boost::asio::ip::udp::endpoint endpoint_)
+        NotifyResponsePacket(boost::uint32_t transaction_id, const Guid & peer_guid, boost::uint32_t task_id,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;
@@ -242,8 +243,8 @@ namespace protocol
         PeerLeavePacket()
         {
         }
-        PeerLeavePacket(boost::uint32_t transaction_id, Guid peer_guid,
-            boost::asio::ip::udp::endpoint endpoint_)
+        PeerLeavePacket(boost::uint32_t transaction_id, const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_guid_ = peer_guid;

@@ -41,8 +41,8 @@ namespace protocol
             reserved2_ = 0;
         }
 
-        LiveRequestAnnouncePacket(boost::uint32_t transaction_id, RID rid, boost::uint32_t request_block_id,
-            boost::uint32_t upload_bandwidth, boost::asio::ip::udp::endpoint endpoint_)
+        LiveRequestAnnouncePacket(boost::uint32_t transaction_id, const RID & rid, boost::uint32_t request_block_id,
+            boost::uint32_t upload_bandwidth, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -238,10 +238,10 @@ namespace protocol
             ar & live_announce_map_;
         }
 
-        LiveAnnouncePacket(uint32_t transaction_id, RID rid,
+        LiveAnnouncePacket(uint32_t transaction_id, const RID & rid,
             boost::uint16_t block_info_count,
-            std::map<boost::uint32_t, boost::dynamic_bitset<boost::uint8_t> > subpiece_map,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const std::map<boost::uint32_t, boost::dynamic_bitset<boost::uint8_t> > & subpiece_map,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -250,9 +250,9 @@ namespace protocol
             end_point = endpoint_;
         }
 
-        LiveAnnouncePacket(uint32_t transaction_id, RID rid,
-            LiveAnnounceMap live_announce_map,
-            boost::asio::ip::udp::endpoint endpoint_)
+        LiveAnnouncePacket(uint32_t transaction_id, const RID & rid,
+            const LiveAnnounceMap & live_announce_map,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -302,7 +302,8 @@ namespace protocol
 
         LiveRequestSubPiecePacket(
             boost::uint32_t  transaction_id, const RID& rid,
-            const std::vector<LiveSubPieceInfo>& sub_piece_infos, boost::uint16_t priority, boost::asio::ip::udp::endpoint endpoint_)
+            const std::vector<LiveSubPieceInfo>& sub_piece_infos, boost::uint16_t priority, 
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -339,11 +340,11 @@ namespace protocol
 
         LiveSubPiecePacket(
             boost::uint32_t transaction_id,
-            RID rid,
-            LiveSubPieceInfo sub_piece_info,
+            const RID & rid,
+            const LiveSubPieceInfo & sub_piece_info,
             boost::uint16_t sub_piece_length,
-            LiveSubPieceBuffer sub_piece_content,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const LiveSubPieceBuffer & sub_piece_content,
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             resource_id_ = rid;
@@ -541,7 +542,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint16_t protocol_version,
             const PeerInfo & peer_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             protocol_version_ = protocol_version;

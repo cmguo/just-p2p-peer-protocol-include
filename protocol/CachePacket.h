@@ -58,7 +58,7 @@ namespace protocol
             const Guid& peer_guid,
             const RidInfo& rid_info,
             const UrlInfo& url_info,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -79,7 +79,7 @@ namespace protocol
         QueryCacheUrlByRID(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -90,7 +90,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             const RID& resource_id,
             const std::string& url,
-            boost::asio::ip::udp::endpoint endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             response.rid_ = resource_id;

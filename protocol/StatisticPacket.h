@@ -63,7 +63,7 @@ namespace protocol
         }
 
         StatisticIndexPeerPacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, boost::uint64_t time_stamp,
-            Guid peer_guid, PEER_ACTION peer_action, boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid, const PEER_ACTION & peer_action, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -88,7 +88,8 @@ namespace protocol
         }
 
         StatisticIndexUrlPacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, boost::uint64_t time_stamp,
-            Guid peer_guid, PEER_ACTION peer_action, const std::string& url, boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid, const PEER_ACTION & peer_action, const std::string & url, 
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -115,8 +116,9 @@ namespace protocol
             ar & content_id_;
         }
 
-        StatisticIndexContentPacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, boost::uint64_t time_stamp,
-            Guid peer_guid, PEER_ACTION peer_action, Guid content_id, boost::asio::ip::udp::endpoint endpoint_)
+        StatisticIndexContentPacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, 
+            boost::uint64_t time_stamp, const Guid & peer_guid, const PEER_ACTION & peer_action, 
+            const Guid & content_id, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -143,8 +145,9 @@ namespace protocol
             ar & resource_id_;
         }
 
-        StatisticIndexResourcePacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, boost::uint64_t time_stamp,
-            Guid peer_guid, PEER_ACTION peer_action, Guid resource_id, boost::asio::ip::udp::endpoint endpoint_)
+        StatisticIndexResourcePacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, 
+            boost::uint64_t time_stamp, const Guid & peer_guid, const PEER_ACTION & peer_action, 
+            const Guid & resource_id, const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -172,7 +175,8 @@ namespace protocol
         }
 
         StatisticStringPacket(boost::uint32_t transaction_id, boost::uint32_t peer_version, boost::uint64_t time_stamp,
-            Guid peer_guid, PEER_ACTION peer_action, const std::string& data, boost::asio::ip::udp::endpoint endpoint_)
+            const Guid & peer_guid, const PEER_ACTION & peer_action, const std::string & data, 
+            const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;

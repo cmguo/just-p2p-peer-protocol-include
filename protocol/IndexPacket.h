@@ -45,8 +45,8 @@ namespace protocol
         QueryHttpServerByRidPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            RID resource_id,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const RID & resource_id,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -60,9 +60,9 @@ namespace protocol
         QueryHttpServerByRidPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            RID resource_id,
-            std::vector<UrlInfo> http_server,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const RID & resource_id,
+            const std::vector<UrlInfo> & http_server,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -72,9 +72,9 @@ namespace protocol
             IsRequest = 0;
         }
         QueryHttpServerByRidPacket(
-            RID resource_id,
-            std::vector<UrlInfo> http_server,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const RID & resource_id,
+            const std::vector<UrlInfo> & http_server,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             QueryHttpServerByRidPacket(0, 0, resource_id, http_server, server_list_endpoint_);
         }
@@ -131,10 +131,10 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
             boost::uint32_t session_id,
-            string url_string,
-            string refer_string,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const string & url_string,
+            const string & refer_string,
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -151,15 +151,15 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             boost::uint32_t session_id,
-            RID resource_id,
+            const RID & resource_id,
             boost::uint32_t detected_ip,
             boost::uint16_t detected_port,
             boost::uint32_t file_length,
             boost::uint32_t block_size,
-            std::vector<MD5> block_md5,
-            MD5 content_sense_md5,
+            const std::vector<MD5> & block_md5,
+            const MD5 & content_sense_md5,
             boost::uint32_t content_bytes,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -177,15 +177,15 @@ namespace protocol
         }
         QueryRidByUrlPacket(
             boost::uint32_t session_id,
-            RID resource_id,
+            const RID & resource_id,
             boost::uint32_t detected_ip,
             boost::uint16_t detected_port,
             boost::uint32_t file_length,
             boost::uint32_t block_size,
-            std::vector<MD5> block_md5,
-            MD5 content_sense_md5,
+            const std::vector<MD5> & block_md5,
+            const MD5 & content_sense_md5,
             boost::uint32_t content_bytes,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             QueryRidByUrlPacket(0, 0, session_id, resource_id, detected_ip, detected_port, file_length, block_size,
                 block_md5, content_sense_md5, content_bytes, server_list_endpoint_);
@@ -276,15 +276,15 @@ namespace protocol
         AddRidUrlPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
-            RID resource_id,
+            const Guid & peer_guid,
+            const RID & resource_id,
             boost::uint32_t file_length,
             boost::uint32_t  block_size,
             std::vector<MD5> const & block_md5,
             std::vector<UrlInfo> const & http_server,
-            MD5 content_md5,
+            const MD5 & content_md5,
             boost::uint32_t content_bytes,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -306,7 +306,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             boost::uint8_t status,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -314,7 +314,7 @@ namespace protocol
             end_point = server_list_endpoint_;
             IsRequest = 0;
         }
-        AddRidUrlPacket(boost::uint8_t status, boost::asio::ip::udp::endpoint server_list_endpoint_)
+        AddRidUrlPacket(boost::uint8_t status, const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             AddRidUrlPacket(0, 0, status, server_list_endpoint_);
         }
@@ -371,11 +371,11 @@ namespace protocol
         QueryRidByContentPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            MD5 content_sense_md5,
+            const MD5 & content_sense_md5,
             boost::uint32_t content_bytes,
             boost::uint32_t file_length,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -392,15 +392,15 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
             boost::uint32_t session_id,
-            RID resource_id,
+            const RID & resource_id,
             boost::uint32_t detected_ip,
             boost::uint16_t detected_port,
             boost::uint32_t file_length,
             boost::uint32_t block_size,
-            std::vector<MD5> block_md5,
-            MD5 content_sense_md5,
+            const std::vector<MD5> & block_md5,
+            const MD5 & content_sense_md5,
             boost::uint32_t content_bytes,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -417,13 +417,13 @@ namespace protocol
             IsRequest = 0;
         }
         QueryRidByContentPacket(
-            RID resource_id,
+            const RID & resource_id,
             boost::uint32_t file_length,
             boost::uint32_t block_size,
-            std::vector<MD5> block_md5,
-            MD5 content_sense_md5,
+            const std::vector<MD5> & block_md5,
+            const MD5 & content_sense_md5,
             boost::uint32_t content_bytes,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             QueryRidByContentPacket(0, 0, 0, resource_id, 0, 0, file_length, block_size, block_md5, content_sense_md5, content_bytes, server_list_endpoint_);
         }
@@ -477,8 +477,8 @@ namespace protocol
         // request
         QueryTestUrlListPacket(
             boost::uint32_t transaction_id,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             request.peer_guid_ = peer_guid;
@@ -490,7 +490,7 @@ namespace protocol
         QueryTestUrlListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -499,8 +499,8 @@ namespace protocol
         }
         QueryTestUrlListPacket(
             boost::uint32_t transaction_id,
-            const std::vector<String>& url_list,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const const std::vector<String>& url_list,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             response.test_urls_ = url_list;
@@ -543,8 +543,8 @@ namespace protocol
         // request
         QueryKeyWordListPacket(
             boost::uint32_t transaction_id,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -556,7 +556,7 @@ namespace protocol
         QueryKeyWordListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -566,7 +566,7 @@ namespace protocol
         QueryKeyWordListPacket(
             boost::uint32_t transaction_id,
             const std::vector<String>& keyword_list,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             response.keywords_ = keyword_list;
@@ -608,8 +608,8 @@ namespace protocol
         // request
         QueryNeedReportPacket(
             boost::uint32_t transaction_id,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             end_point = server_list_endpoint_;
@@ -621,7 +621,7 @@ namespace protocol
         QueryNeedReportPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -632,7 +632,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             boost::uint8_t need_report,
             boost::uint8_t interval_time,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             response.need_report_ = need_report;
@@ -676,8 +676,8 @@ namespace protocol
         // request
         QueryDataCollectionServerPacket(
             boost::uint32_t transaction_id,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -689,7 +689,7 @@ namespace protocol
         QueryDataCollectionServerPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -699,7 +699,7 @@ namespace protocol
         QueryDataCollectionServerPacket(
             boost::uint32_t transaction_id,
             const DATACOLLECTION_SERVER_INFO& datacollection_server_info,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             response.server_info_ = datacollection_server_info;
@@ -740,8 +740,8 @@ namespace protocol
         // request
         QueryUploadPicProbabilityPacket(
             boost::uint32_t transaction_id,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             end_point = server_list_endpoint_;
             transaction_id_ = transaction_id;
@@ -753,7 +753,7 @@ namespace protocol
         QueryUploadPicProbabilityPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;
@@ -763,7 +763,7 @@ namespace protocol
         QueryUploadPicProbabilityPacket(
             boost::uint32_t transaction_id,
             float upload_pic_probability,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             response.upload_pic_probability_ = upload_pic_probability;
@@ -806,8 +806,8 @@ namespace protocol
         QueryNotifyListPacket(
             boost::uint32_t transaction_id,
             boost::uint32_t peer_version,
-            Guid peer_guid,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const Guid & peer_guid,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -820,8 +820,8 @@ namespace protocol
         QueryNotifyListPacket(
             boost::uint32_t transaction_id,
             boost::uint8_t error_code,
-            std::vector<NOTIFY_SERVER_INFO> notify_server_info,
-            boost::asio::ip::udp::endpoint server_list_endpoint_)
+            const std::vector<NOTIFY_SERVER_INFO> & notify_server_info,
+            const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
             error_code_ = error_code;

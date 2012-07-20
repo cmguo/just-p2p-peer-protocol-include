@@ -161,7 +161,7 @@ namespace protocol
             boost::uint32_t transaction_id,
             const RID & rid,
             const SubPieceInfo & sub_piece_info,
-            SubPieceBuffer sub_piece_buffer)
+            const SubPieceBuffer & sub_piece_buffer)
             : resource_id_(rid)
             , sub_piece_info_(sub_piece_info)
             , sub_piece_length_(sub_piece_buffer.Length())
