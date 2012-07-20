@@ -132,7 +132,7 @@ namespace protocol
         }
 
         template <typename PeerPacketType>
-        ErrorPacket(const PeerPacketType const &packet)
+        ErrorPacket(PeerPacketType const &packet)
         {
             transaction_id_ = packet.transaction_id_;
             resource_id_ = packet.resource_id_;
@@ -366,7 +366,7 @@ namespace protocol
             boost::uint32_t  transaction_id,
             const RID & rid,
             const Guid & peer_guid,
-            const SubPieceInfo const & sub_piece_info,
+            SubPieceInfo const & sub_piece_info,
             const boost::asio::ip::udp::endpoint & endpoint_)
         {
             transaction_id_ = transaction_id;
@@ -457,7 +457,7 @@ namespace protocol
         RequestSubPiecePacket(
             boost::uint32_t  transaction_id,
             const RID & rid,
-            const SubPieceInfo const & sub_piece_info,
+            SubPieceInfo const & sub_piece_info,
             const boost::asio::ip::udp::endpoint & endpoint_,
             boost::uint16_t priority,
             boost::uint16_t reserve = 0)

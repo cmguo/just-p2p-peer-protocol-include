@@ -499,7 +499,7 @@ namespace protocol
         }
         QueryTestUrlListPacket(
             boost::uint32_t transaction_id,
-            const const std::vector<String>& url_list,
+            const std::vector<String>& url_list,
             const boost::asio::ip::udp::endpoint & server_list_endpoint_)
         {
             transaction_id_ = transaction_id;
