@@ -4,7 +4,7 @@
 * 
 * NatCheckPacket.h
 * 
-* Description: 和nat类型检测服务器进行交互的命令
+* Description: 和nat类型检测服务器进行交互的命仿
 * 
 * --------------------
 * 2012-07-18, kelvinchen create
@@ -20,7 +20,7 @@ namespace protocol
 {
     //------请求natcheckserver用同一个ip同一个port返回看到的请求者的endpoint------
     //Request：querytimes，localip，localport
-    //Response： querytimes,detectip,detectport,sendserverip,sendserverport
+    //Response＿querytimes,detectip,detectport,sendserverip,sendserverport
 
     struct NatCheckSameRoutePacket
         : public ServerPacketT<0x81>
@@ -91,7 +91,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            boost::uint32_t length = ServerPacketT::length();            
+            boost::uint32_t length = ServerPacket::length();            
             if (IsRequest) 
             {
                 length += sizeof(query_times_) + sizeof(request.local_ip_) + sizeof(request.local_port_);
@@ -102,7 +102,7 @@ namespace protocol
             return length;
         }
 
-         //表示是第几次查询了，可以用来统计重发的次数
+         //表示是第几次查询了，可以用来统计重发的次敿
         boost::uint16_t query_times_;
 
         struct Request {
@@ -121,7 +121,7 @@ namespace protocol
 
    //------请求natcheckserver用同一个ip不同的port返回看到的请求者的endpoint------
 //    Request：querytimes，localip，localport
-//    Response： querytimes,detectip,detectport, sendserverip, sendserverport,receiveserverport
+//    Response＿querytimes,detectip,detectport, sendserverip, sendserverport,receiveserverport
 
 
     struct NatCheckDiffPortPacket
@@ -196,7 +196,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            boost::uint32_t length = ServerPacketT::length();            
+            boost::uint32_t length = ServerPacket::length();            
             if (IsRequest) 
             {
                 length += sizeof(query_times_) + sizeof(request.local_ip_) + sizeof(request.local_port_);
@@ -207,7 +207,7 @@ namespace protocol
             return length;
         }
 
-         //表示是第几次查询了，可以用来统计重发的次数
+         //表示是第几次查询了，可以用来统计重发的次敿
         boost::uint16_t query_times_;
 
         struct Request {
@@ -228,7 +228,7 @@ namespace protocol
   
     //------请求natcheckserver用不同的ip，不同的port，返回看到的请求者的endpoint------
     //Request：querytimes，localip，localport
-    //Response： querytimes,detectip,detectport, sendserverip, sendserverport,receiveserverip, receiveserverport
+    //Response＿querytimes,detectip,detectport, sendserverip, sendserverport,receiveserverip, receiveserverport
 
     struct NatCheckDiffIpPacket
         : public ServerPacketT<0x83>
@@ -305,7 +305,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            boost::uint32_t length = ServerPacketT::length();            
+            boost::uint32_t length = ServerPacket::length();            
             if (IsRequest) 
             {
                 length += sizeof(query_times_) + sizeof(request.local_ip_) + sizeof(request.local_port_);
@@ -317,7 +317,7 @@ namespace protocol
             return length;
         }
 
-         //表示是第几次查询了，可以用来统计重发的次数
+         //表示是第几次查询了，可以用来统计重发的次敿
         boost::uint16_t query_times_;
 
         struct Request {
