@@ -35,6 +35,22 @@ namespace protocol
             reserve_ = 0;
         }
 
+        virtual boost::uint32_t length() const
+        {
+            boost::uint32_t length = Packet::length();
+            length += sizeof(IsRequest);
+            if(IsRequest)
+            {
+                length += sizeof(peer_version_);
+                length += sizeof(reserve_);
+            }
+            else
+            {
+                length += sizeof(error_code_);
+            }
+            return length;
+        }
+
         boost::uint8_t IsRequest;
         
         boost::uint16_t reserve_;

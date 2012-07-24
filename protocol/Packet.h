@@ -40,7 +40,8 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            return sizeof(transaction_id_);
+            //sizeof(boost::uint8_t)表示action，4表示校验码
+            return sizeof(transaction_id_) + sizeof(boost::uint8_t) + 4;
         }
 
         virtual ~Packet(){}
