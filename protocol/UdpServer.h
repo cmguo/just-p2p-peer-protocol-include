@@ -37,8 +37,10 @@ namespace protocol
             IUdpServerListener::p handler);
 
     public:
-        bool Listen(
-            boost::uint16_t port);
+        //如果不设置ip，那么就默认绑定在 0.0.0.0上，也就是本机所有的ip上的包都能接收到。
+        bool Listen(boost::uint16_t port);
+
+        bool Listen(const std::string& ip,boost::uint16_t port);
 
         uint32_t Recv(
             uint32_t count);
