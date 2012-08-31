@@ -646,6 +646,71 @@ namespace protocol
         } response;
     };
 
+    struct QueryUdpServerListPacket
+        : public ServerPacketT<0x29>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+            if (IsRequest)
+            {
+            }
+            else
+            {
+                ar & util::serialization::make_sized<boost::uint16_t>(response.udpserver_infos_);
+            }
+        }
+
+        QueryUdpServerListPacket()
+        {
+
+        }
+
+        // request
+        QueryUdpServerListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t peer_version,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        QueryUdpServerListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const std::vector<UdpServerInfo>& udpserver_infos,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.udpserver_infos_ = udpserver_infos;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        // response
+        QueryUdpServerListPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        struct Response
+        {
+            std::vector<UdpServerInfo> udpserver_infos_;
+        } response;
+    };
+
     template <typename PacketHandler>
     inline void register_bootstrap_packet(
         PacketHandler & handler)
@@ -659,6 +724,7 @@ namespace protocol
         handler.template register_packet<QuerySnListPacket>();
         handler.template register_packet<QueryTrackerForListingPacket>();
         handler.template register_packet<QueryVipSnListPacket>();
+        handler.template register_packet<QueryUdpServerListPacket>();
     }
 
 }

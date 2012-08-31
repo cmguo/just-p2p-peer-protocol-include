@@ -166,6 +166,18 @@ namespace protocol
                 & PeerNatType & UploadPriority & IdleTimeInMins & TrackerPriority;
         }
 
+		static boost::uint32_t length()
+		{
+			//return len += sizeof(IP)+sizeof(UdpPort)+sizeof(PeerVersion)+sizeof(DetectIP)+sizeof(DetectUdpPort)+sizeof(StunIP)+sizeof(StunUdpPort)
+			//len += sizeof(PeerNatType)+sizeof(UploadPriority)+sizeof(IdleTimeInMins)+sizeof(TrackerPriority);
+			int len = 0;
+			len += sizeof(uint32_t) + sizeof(boost::uint16_t) + sizeof(boost::uint16_t) + sizeof(uint32_t) + sizeof(boost::uint16_t) + sizeof(uint32_t) + sizeof(boost::uint16_t);
+			len += sizeof(boost::uint8_t) + sizeof(boost::uint8_t) + sizeof(boost::uint8_t) + sizeof(boost::uint8_t);
+			return len;
+		}
+
+
+
         // TODO(emma): 去掉默认构造函数，再添加拷贝构造函数
         CandidatePeerInfo()
         {
@@ -200,6 +212,32 @@ namespace protocol
             StunUdpPort = stun_udp_port;
             UploadPriority = 0;
             IdleTimeInMins = 0;
+        }
+
+        CandidatePeerInfo(
+            uint32_t ip,
+            boost::uint16_t udp_port,
+            boost::uint16_t peer_version,
+            uint32_t detect_ip,
+            boost::uint16_t detect_udp_port,
+            uint32_t stun_ip,
+            boost::uint16_t stun_udp_port,
+            boost::uint8_t  peer_nat_type,
+            boost::uint8_t  upload_priority,
+            boost::uint8_t  idle_time_in_mins,
+            boost::uint8_t  tracker_priority)
+        {
+            IP = ip;
+            UdpPort = udp_port;
+            PeerVersion = peer_version;
+            DetectIP = detect_ip;
+            DetectUdpPort = detect_udp_port;
+            StunIP = stun_ip;
+            StunUdpPort = stun_udp_port;
+            PeerNatType = peer_nat_type;
+            UploadPriority = upload_priority;
+            IdleTimeInMins = idle_time_in_mins;
+            TrackerPriority = tracker_priority;
         }
 
         bool NeedStunInvoke(uint32_t LocalDetectedIP) const
@@ -321,8 +359,7 @@ namespace protocol
             << ", Stun Address: " << framework::network::Endpoint(info.StunIP, info.StunUdpPort).to_string()
             << ", PeerVersion: " << info.PeerVersion
             << ", UploadPriority: " << (uint32_t)info.UploadPriority
-
-           ;
+            <<", PeerNatType:"<<short(info.PeerNatType);
     }
 
 

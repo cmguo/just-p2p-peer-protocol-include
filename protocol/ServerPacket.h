@@ -22,6 +22,7 @@ namespace protocol
             ar & IsRequest;
             if (IsRequest) {
                 ar & peer_version_;
+                ar & source_;
                 ar & reserve_;
             } else {
                 ar & error_code_;
@@ -32,6 +33,7 @@ namespace protocol
         {
             IsRequest = 1;
             peer_version_ = PEER_VERSION;
+            source_ = 0;
             reserve_ = 0;
         }
 
@@ -42,6 +44,7 @@ namespace protocol
             if(IsRequest)
             {
                 length += sizeof(peer_version_);
+                length += sizeof(source_);
                 length += sizeof(reserve_);
             }
             else
@@ -53,7 +56,8 @@ namespace protocol
 
         boost::uint8_t IsRequest;
         
-        boost::uint16_t reserve_;
+        boost::uint8_t source_;
+        boost::uint8_t reserve_;
         boost::uint16_t peer_version_;
         boost::uint8_t error_code_;
     };

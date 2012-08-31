@@ -41,6 +41,17 @@ namespace protocol
                 ar & request.resource_id_;
                 ar & request.peer_guid_;
                 ar & request.request_peer_count_;
+
+                //PEER_VERSION_V12 新添加的字段，
+                if (Archive::is_loading::value && peer_version_ < PEER_VERSION_V12)
+                {
+                    request.peer_nat_type_ = TYPE_ERROR;
+                }
+                else
+                {
+                    ar & request.peer_nat_type_;
+                }
+
             } else{
                 ar & response.resource_id_;
                 ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
@@ -52,6 +63,18 @@ namespace protocol
             // IsRequest = 1;
         }
 
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest) {
+				length += sizeof(request.resource_id_) + sizeof(request.peer_guid_) + sizeof(request.request_peer_count_) + sizeof(request.peer_nat_type_);
+			} else {
+				length += sizeof(response.resource_id_) + sizeof(boost::uint16_t) + response.peer_infos_.size()*CandidatePeerInfo::length();
+			}
+
+			return length;
+		}
+
         // request
         ListPacket(
             boost::uint32_t transaction_id,
@@ -59,7 +82,8 @@ namespace protocol
             const RID & resource_id,
             const Guid & peer_guid,
             boost::uint16_t request_peer_count,
-            const boost::asio::ip::udp::endpoint & endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_,
+            boost::uint8_t nat_type = TYPE_ERROR)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -67,8 +91,8 @@ namespace protocol
             request.peer_guid_ = peer_guid;
             request.request_peer_count_ = request_peer_count;
             end_point = endpoint_;
+            request.peer_nat_type_ = nat_type;
             IsRequest = 1;
-
         }
 
         ListPacket(
@@ -104,6 +128,7 @@ namespace protocol
             RID resource_id_;
             Guid peer_guid_;
             boost::uint16_t request_peer_count_;
+            boost::uint8_t  peer_nat_type_;
         } request;
         struct Response {
             RID resource_id_;
@@ -141,6 +166,15 @@ namespace protocol
             ServerPacket::serialize(ar);
             ar & peer_guid_;
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			length += sizeof(peer_guid_);
+
+			return length;
+		}
+
         Guid peer_guid_;
     };
 
@@ -175,8 +209,9 @@ namespace protocol
             boost::int32_t upload_limit_kbs,
             boost::int32_t upload_speed_kbs,
             const boost::asio::ip::udp::endpoint & endpoint_,
-            boost::uint16_t internal_tcp_port = 0,
-            boost::uint16_t upnp_tcp_port = 0)
+            boost::uint16_t internal_tcp_port,
+            boost::uint16_t upnp_tcp_port,
+            const std::vector<boost::uint32_t>& traceroute_ips)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -266,6 +301,16 @@ namespace protocol
                     ar & request.stun_detected_ip_;
                 }
 
+                //PEER_VERSION_V12新添加，到tracker的tracerouteip，计划5个就够了。用于做精细化的p4p，例如小区内的节点返回
+                if (Archive::is_loading::value && peer_version_ < PEER_VERSION_V12)
+                {
+                    request.traceroute_ips_.clear();
+                }
+                else
+                {
+                     ar & util::serialization::make_sized<boost::uint8_t>(request.traceroute_ips_);
+                }
+
             }else{
                 ar & response.keep_alive_interval_;
                 ar & response.detected_ip_;
@@ -273,6 +318,36 @@ namespace protocol
                 ar & response.resource_count_;
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest){
+				length += sizeof(request.peer_guid_);
+				length += sizeof(request.local_resource_count_);
+				length += sizeof(request.server_resource_count_);
+				length += sizeof(request.peer_nat_type_);
+				length += sizeof(request.upload_priority_);
+				length += sizeof(request.idle_time_in_mins_);
+				length += sizeof(request.reversed_);
+				length += sizeof(request.internal_tcp_port_);
+				length += sizeof(request.udp_port_);
+				length += sizeof(request.upnp_tcp_port_);
+				length += sizeof(request.stun_peer_ip_);
+				length += sizeof(request.stun_peer_udp_port_);
+				length += sizeof(request.stun_detected_udp_port_);
+			    length += sizeof(request.upload_bandwidth_kbs_);
+				length += sizeof(request.upload_limit_kbs_);
+				length += sizeof(request.upload_speed_kbs_);
+				length += sizeof(boost::uint8_t) + request.real_ips_.size()*sizeof(boost::uint32_t);
+				length += sizeof(boost::uint8_t) + request.resource_ids_.size()*sizeof(REPORT_RESOURCE_STRUCT);
+                length += sizeof(boost::uint8_t) + request.traceroute_ips_.size()*sizeof(boost::uint32_t);
+			}else{
+				length += sizeof(response.keep_alive_interval_) + sizeof(response.detected_ip_) + sizeof(response.detected_udp_port_) + sizeof(response.resource_count_);
+			}
+
+			return length;
+		}		
 
         struct Request {
             Guid peer_guid_;
@@ -294,6 +369,7 @@ namespace protocol
             std::vector<boost::uint32_t> real_ips_;
             std::vector<REPORT_RESOURCE_STRUCT> resource_ids_;
             boost::uint32_t stun_detected_ip_;
+            std::vector<boost::uint32_t> traceroute_ips_;
 
         } request;
         struct Response {
@@ -323,6 +399,21 @@ namespace protocol
                 ar & response.peer_count_;
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest)
+			{
+				length += sizeof(request.resource_id_);
+			}
+			else{
+				length += sizeof(response.resource_id_);
+				length += sizeof(response.peer_count_);
+			}
+
+			return length;
+		}
 
         QueryPeerCountPacket()
         {
@@ -386,6 +477,17 @@ namespace protocol
             }
         }
 
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if(IsRequest)
+			{
+				length += sizeof(magic_number_) + sizeof(command_id_) + sizeof(reserved_);
+			}
+
+			return length;
+		}
+
         InternalCommandPacket()
         {
             reserved_ = 0;
@@ -439,6 +541,21 @@ namespace protocol
                 ar & util::serialization::make_sized<boost::uint8_t>(response.resources_);
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest)
+			{
+				length += sizeof(request.peer_guid_);
+			}
+			else{
+				length += sizeof(response.peer_guid_);
+				length += sizeof(boost::uint8_t) + response.resources_.size()*sizeof(RID);
+			}
+
+			return length;
+		}
 
         QueryPeerResourcesPacket()
         {
@@ -502,6 +619,20 @@ namespace protocol
             }
         }
 
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest)
+			{
+				//请求没有包体
+			}
+			else{				
+				length += sizeof(boost::uint16_t) + sizeof(boost::uint16_t) + response.tracker_statistic_.size();
+			}
+
+			return length;
+		}
+
         QueryTrackerStatisticPacket()
         {
             // IsRequest = 0;
@@ -560,6 +691,19 @@ namespace protocol
                 ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest) {
+				length += sizeof(request.resource_id_) + sizeof(request.peer_guid_) + sizeof(request.request_peer_count_);
+			} else{
+				length += sizeof(response.resource_id_);
+				length += sizeof(boost::uint16_t) + response.peer_infos_.size()*CandidatePeerInfo::length();
+			}
+
+			return length;
+		}
 
         ListTcpPacket()
         {
@@ -640,11 +784,34 @@ namespace protocol
                 ar & request.peer_guid_;
                 ar & request.request_peer_count_;
                 ar & request.reqest_ip_;
+                //PEER_VERSION_V12 新添加的字段，可以根据nat类型来决定返回，例如外网节点多返回内网，内网节点多返回外网
+                if (Archive::is_loading::value && peer_version_ < PEER_VERSION_V12)
+                {
+                    request.peer_nat_type_ = TYPE_ERROR;
+                }
+                else
+                {
+                    ar & request.peer_nat_type_;
+                }
             } else{
                 ar & response.resource_id_;
                 ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest) {
+				length += sizeof(request.resource_id_) + sizeof(request.request_peer_count_) + 
+                    sizeof(request.reqest_ip_)+sizeof(request.peer_nat_type_);
+			} else{
+				length += sizeof(response.resource_id_);
+				length += sizeof(boost::uint16_t) + response.peer_infos_.size()*CandidatePeerInfo::length();
+			}
+
+			return length;
+		}
 
         ListWithIpPacket()
         {
@@ -659,7 +826,8 @@ namespace protocol
             const Guid & peer_guid,
             boost::uint16_t request_peer_count,
             boost::uint32_t reqest_ip,
-            const boost::asio::ip::udp::endpoint & endpoint_)
+            const boost::asio::ip::udp::endpoint & endpoint_,
+            boost::uint8_t nat_type = TYPE_ERROR)
         {
             transaction_id_ = transaction_id;
             peer_version_ = peer_version;
@@ -668,6 +836,7 @@ namespace protocol
             request.request_peer_count_ = request_peer_count;
             request.reqest_ip_ = reqest_ip;
             end_point = endpoint_;
+            request.peer_nat_type_ = nat_type;
             IsRequest = 1;
         }
 
@@ -705,6 +874,7 @@ namespace protocol
             Guid peer_guid_;
             boost::uint16_t request_peer_count_;
             boost::uint32_t reqest_ip_;
+            boost::uint8_t peer_nat_type_;
         } request;
         struct Response {
             RID resource_id_;
@@ -731,6 +901,19 @@ namespace protocol
                 ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
             }
         }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			if (IsRequest) {
+				length += sizeof(request.resource_id_) + sizeof(request.peer_guid_) + sizeof(request.request_peer_count_) + sizeof(request.reqest_ip_);
+			} else{
+				length += sizeof(response.resource_id_);
+				length += sizeof(boost::uint16_t) + response.peer_infos_.size()*CandidatePeerInfo::length();
+			}
+
+			return length;
+		}
 
         ListTcpWithIpPacket()
         {

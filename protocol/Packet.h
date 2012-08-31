@@ -21,7 +21,8 @@ namespace protocol
     const boost::uint16_t PEER_VERSION_V9 = 0x0109;
     const boost::uint16_t PEER_VERSION_V10 = 0x010a;
     const boost::uint16_t PEER_VERSION_V11 = 0x010b;
-    const boost::uint16_t PEER_VERSION = PEER_VERSION_V11;
+    const boost::uint16_t PEER_VERSION_V12 = 0x010c;
+    const boost::uint16_t PEER_VERSION = PEER_VERSION_V12;
 
     struct Packet
     {
@@ -40,7 +41,7 @@ namespace protocol
 
         virtual boost::uint32_t length() const
         {
-            //sizeof(boost::uint8_t)表示action，4表示校验码
+            //sizeof(boost::uint8_t)表示action�?表示校验�?
             return sizeof(transaction_id_) + sizeof(boost::uint8_t) + 4;
         }
 

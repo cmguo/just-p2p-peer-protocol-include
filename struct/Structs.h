@@ -165,11 +165,30 @@ namespace protocol
 
         bool operator == (const STUN_SERVER_INFO& n) const
         {
-            return 0 == memcmp(this, &n, sizeof(STUN_SERVER_INFO));
+			return Length == n.Length && IP == n.IP && Port == n.Port && Type == n.Type;
         }
         bool operator < (const STUN_SERVER_INFO& n) const
         {
-            return memcmp(this, &n, sizeof(STUN_SERVER_INFO)) < 0;
+			if (Length != n.Length)
+			{
+				return Length < n.Length;
+			}
+			else if (IP != n.IP)
+			{
+				return IP < n.IP;
+			}
+			else if (Port != n.Port)
+			{
+				return Port < n.Port;
+			}
+			else if ( Type != n.Type)
+			{
+				return Type < n.Type;
+			}
+			else
+			{
+				return false;
+			}
         }
 
         boost::uint32_t GetIP() const
@@ -267,7 +286,26 @@ namespace protocol
 
         bool operator < (const INDEX_SERVER_INFO& n) const
         {
-            return memcmp(this, &n, sizeof(INDEX_SERVER_INFO)) < 0;
+			if (Length != n.Length)
+			{
+				return Length < n.Length;
+			}
+			else if (IP != n.IP)
+			{
+				return IP < n.IP;
+			}
+			else if (Port != n.Port)
+			{
+				return Port < n.Port;
+			}
+			else if ( Type != n.Type)
+			{
+				return Type < n.Type;
+			}
+			else
+			{
+				return false;
+			}
         }
     };
 
@@ -298,11 +336,30 @@ namespace protocol
 
         bool operator == (const DATACOLLECTION_SERVER_INFO& n) const
         {
-            return 0 == memcmp(this, &n, sizeof(DATACOLLECTION_SERVER_INFO));
+			return Length == n.Length && IP == n.IP && Port == n.Port && Type == n.Type;
         }
         bool operator < (const DATACOLLECTION_SERVER_INFO& n) const
         {
-            return memcmp(this, &n, sizeof(DATACOLLECTION_SERVER_INFO)) < 0;
+			if (Length != n.Length)
+			{
+				return Length < n.Length;
+			}
+			else if (IP != n.IP)
+			{
+				return IP < n.IP;
+			}
+			else if (Port != n.Port)
+			{
+				return Port < n.Port;
+			}
+			else if ( Type != n.Type)
+			{
+				return Type < n.Type;
+			}
+			else
+			{
+				return false;
+			}
         }
     };
 
@@ -821,7 +878,27 @@ namespace protocol
             const SERVER_DATA& a,
             const SERVER_DATA& b)
         {
-            return memcmp(&a, &b, sizeof(SERVER_DATA)) < 0;
+            //return memcmp(&a, &b, sizeof(SERVER_DATA)) < 0;
+			if (a.IP != b.IP)
+			{
+				return a.IP < b.IP;
+			}
+			else if (a.Port != b.Port)
+			{
+				return a.Port < b.Port;
+			}
+			else if (a.ModID != b.ModID)
+			{
+				return a.ModID < b.ModID;
+			}
+			else if (a.ConnectType != b.ConnectType)
+			{
+				return a.ConnectType < b.ConnectType;
+			}
+			else
+			{
+				return false;
+			}
         }
 
     };
@@ -872,30 +949,30 @@ namespace protocol
         // RidInfo AsRidInfo() const;
     };
 
-    struct SuperNodeInfo
+    struct CommonServerInfo
     {
         boost::uint32_t ip_;
         boost::uint16_t port_;
         boost::uint8_t priority_;
 
-        SuperNodeInfo()
+        CommonServerInfo()
         {
-            memset(this, 0, sizeof(SuperNodeInfo));
+            memset(this, 0, sizeof(CommonServerInfo));
         }
 
-        SuperNodeInfo(boost::uint32_t ip, boost::uint16_t port, boost::uint16_t priority)
+        CommonServerInfo(boost::uint32_t ip, boost::uint16_t port, boost::uint16_t priority)
         {
             ip_ = ip;
             port_ = port;
             priority_ = priority;
         }
 
-        bool operator == (const SuperNodeInfo& info) const
+        bool operator == (const CommonServerInfo& info) const
         {
             return ip_ == info.ip_ && port_ == info.port_ && priority_ == info.priority_;
         }
 
-        friend bool operator < (const SuperNodeInfo& lhs, const SuperNodeInfo& rhs)
+        friend bool operator < (const CommonServerInfo& lhs, const CommonServerInfo& rhs)
         {
             if (lhs.ip_ != rhs.ip_)
             {
@@ -921,6 +998,9 @@ namespace protocol
             return ip_;
         }
     };
+
+    typedef CommonServerInfo SuperNodeInfo;
+    typedef CommonServerInfo UdpServerInfo;
 }
 
 #endif
