@@ -335,7 +335,123 @@ namespace protocol
         } response;
 
     };
+    
+    //用来检测upnp端口是否成功。peer会带上映射成功的upnp端口，让natcheckserver用其他的ip，给peer上报的upnp端口进行回复
+    struct NatCheckForUpnpPacket
+        :public ServerPacketT<0x84>
+    {
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+            if (IsRequest) {
+                ar & query_times_;
+                ar & request.local_ip_;
+                ar & request.local_port_;
+                ar & request.local_upnp_udp_port_;
+            } else {      
+                ar & query_times_;
+                ar & response.detected_ip_;
+                ar & response.detect_udp_port_;  
+                ar & response.send_udp_upnp_port_;
+                ar & response.send_nc_ip_;
+                ar & response.send_nc_port_; 
+                ar & response.recv_nc_ip_; 
+                ar & response.recv_nc_port_;
+            }
+        }
 
+        NatCheckForUpnpPacket()
+        {
+            // IsRequest = 0;
+        }
+
+        // request
+        NatCheckForUpnpPacket(            
+            boost::uint16_t query_times,
+            boost::uint32_t local_ip,
+            boost::uint16_t local_port,
+            boost::uint16_t local_upnp_udp_port_,
+            boost::uint32_t transaction_id,
+            boost::uint32_t peer_version,
+            const boost::asio::ip::udp::endpoint& endpoint_
+            )
+        {
+            request.local_ip_ = local_ip;
+            request.local_port_ = local_port;
+            request.local_upnp_udp_port_ = local_upnp_udp_port_;
+            query_times_ = query_times;
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+
+        // response
+        NatCheckForUpnpPacket(
+            boost::uint16_t query_times,
+            boost::uint32_t detected_ip,
+            boost::uint16_t detected_udp_port,
+            boost::uint16_t send_udp_upnp_port,
+            boost::uint32_t send_nc_ip,
+            boost::uint16_t send_nc_port,
+            boost::uint16_t recv_nc_ip,
+            boost::uint16_t recv_nc_port,
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            const boost::asio::ip::udp::endpoint& endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            query_times_=query_times;
+            response.detected_ip_ = detected_ip;
+            response.detect_udp_port_ = detected_udp_port;
+            response.send_udp_upnp_port_ = send_udp_upnp_port;
+            response.send_nc_ip_ = send_nc_ip;
+            response.send_nc_port_ = send_nc_port;
+            response.recv_nc_ip_ = recv_nc_ip;
+            response.recv_nc_port_ = recv_nc_port;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        virtual boost::uint32_t length() const
+        {
+            boost::uint32_t length = ServerPacket::length();            
+            if (IsRequest) 
+            {
+                length += sizeof(query_times_) + sizeof(request.local_ip_) + sizeof(request.local_port_) 
+                    + sizeof(request.local_upnp_udp_port_);
+            } else {      
+                length += sizeof(query_times_) + sizeof(response.detected_ip_)+ sizeof(response.detect_udp_port_)
+                    +sizeof(response.send_udp_upnp_port_)
+                    +sizeof(response.send_nc_ip_) + sizeof(response.send_nc_port_)
+                    +sizeof(response.recv_nc_port_) + sizeof(response.recv_nc_ip_);
+            }
+            return length;
+        }
+
+        //表示是第几次查询了，可以用来统计重发的次数
+        boost::uint16_t query_times_;
+
+        struct Request {
+            boost::uint32_t local_ip_;
+            boost::uint16_t local_port_;   
+            boost::uint16_t local_upnp_udp_port_;
+
+        } request;
+        struct Response {
+            boost::uint32_t detected_ip_;
+            boost::uint16_t detect_udp_port_;
+            //send_udp_upnp_port_表示netcheck是向哪个端口发包的，一般和request.local_upnp_udp_port_是一样的
+            boost::uint16_t send_udp_upnp_port_;
+            boost::uint32_t send_nc_ip_;
+            boost::uint16_t send_nc_port_;
+            boost::uint32_t recv_nc_ip_;
+            boost::uint16_t recv_nc_port_;
+        } response;
+
+    };
 
     template <typename PacketHandler>
     void register_natcheck_packet(
@@ -344,6 +460,7 @@ namespace protocol
         handler.template register_packet<NatCheckSameRoutePacket>();
         handler.template register_packet<NatCheckDiffPortPacket>();
         handler.template register_packet<NatCheckDiffIpPacket>();
+        handler.template register_packet<NatCheckForUpnpPacket>();
     }
 
 }

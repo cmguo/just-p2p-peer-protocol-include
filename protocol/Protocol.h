@@ -37,7 +37,7 @@ const uint32_t LIVE_SUB_PIECE_SIZE = 1400;
 #include "protocol/LivePeerPacket.h"
 #include "protocol/StatisticPacket.h"
 #include "protocol/StunServerPacket.h"
-#include "protocol/TrackerPacket.h"
+#include "TrackerPacket.h"
 #include "protocol/PushServerPacket.h"
 #include "protocol/PushServerPacketV2.h"
 #include "protocol/NotifyPacket.h"

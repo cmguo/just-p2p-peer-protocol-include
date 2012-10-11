@@ -380,6 +380,105 @@ namespace protocol
         } response;
     };
 
+   /**
+    *@brief Peer发向TrackerServer的 FlashReport 包和TrackerServer回给Peer的 KeepAlive 包
+    */
+    struct FlashReportPacket
+        : public ServerPacketT<0x3f>
+    {
+		boost::uint64_t reserve_1;
+		boost::uint64_t reserve_2;
+
+        FlashReportPacket()
+        {
+        }
+
+        // request
+        FlashReportPacket(
+            boost::uint32_t transaction_id,
+            boost::uint16_t peer_version,
+			const std::string & flash_id,
+            boost::uint16_t local_resource_count,
+			boost::uint32_t reporter_ip,
+            boost::uint16_t reporter_port,
+			const std::vector<REPORT_RESOURCE_STRUCT> & resource_ids,
+			const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            peer_version_ = peer_version;
+            request.flash_id_ = flash_id;
+            request.local_resource_count_ = local_resource_count;
+			request.reporter_ip_ = reporter_ip;
+            request.reporter_port_ = reporter_port;
+			request.resource_ids_ = resource_ids;
+            end_point = endpoint_;
+            IsRequest = 1;
+        }
+        // response
+        FlashReportPacket(
+            boost::uint32_t transaction_id,
+            boost::uint8_t error_code,
+            boost::uint16_t keepalive_interval,
+            boost::uint16_t resource_count,
+            const boost::asio::ip::udp::endpoint & endpoint_)
+        {
+            transaction_id_ = transaction_id;
+            error_code_ = error_code;
+            response.keep_alive_interval_ = keepalive_interval;
+            response.resource_count_ = resource_count;
+            end_point = endpoint_;
+            IsRequest = 0;
+        }
+
+        template <typename Archive>
+        void serialize(Archive & ar)
+        {
+            ServerPacket::serialize(ar);
+			ar & reserve_1;
+			ar & reserve_2;
+            if (IsRequest){
+                ar & util::serialization::make_sized<boost::uint16_t>(request.flash_id_);
+                ar & request.local_resource_count_;
+                ar & request.reporter_ip_;
+				ar & request.reporter_port_;
+				ar & util::serialization::make_sized<boost::uint8_t>(request.resource_ids_);
+            }else{
+                ar & response.keep_alive_interval_;
+                ar & response.resource_count_;
+            }
+        }
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t length = ServerPacket::length();
+			length += sizeof(reserve_1) + sizeof(reserve_2);
+			if (IsRequest)
+            {
+                length += sizeof(boost::uint16_t) + request.flash_id_.size();
+				length += sizeof(request.local_resource_count_);
+				length += sizeof(request.reporter_ip_);
+				length += sizeof(request.reporter_port_);
+				length += sizeof(boost::uint8_t) + request.resource_ids_.size()*sizeof(REPORT_RESOURCE_STRUCT);
+			}else{
+				length += sizeof(response.keep_alive_interval_) + sizeof(response.resource_count_);
+			}
+
+			return length;
+		}		
+
+        struct Request {
+			std::string flash_id_;
+            boost::uint16_t local_resource_count_;
+            boost::uint32_t reporter_ip_;
+            boost::uint16_t reporter_port_;
+            std::vector<REPORT_RESOURCE_STRUCT> resource_ids_;
+        } request;
+        struct Response {
+            boost::uint16_t keep_alive_interval_;
+            boost::uint16_t resource_count_;
+        } response;
+    };
+
     /**
     * @brief Peer向TrackerServer查询资源拥有的PeerCount 和 Tracker向Peer发送查询结果
     */
@@ -882,6 +981,121 @@ namespace protocol
         } response;
     };
 
+	//和list不同的是，这里制定了客户端的ip，而不是从socket里获取
+	struct FlashListWithIpPacket
+		: public ServerPacketT<0x3e>
+	{
+		boost::uint64_t  reserve_1;
+        boost::uint64_t  reserve_2;
+		template <typename Archive>
+		void serialize(Archive & ar)
+		{
+
+			ServerPacket::serialize(ar);
+			ar & reserve_1;
+			ar & reserve_2;
+
+			if (IsRequest)
+			{
+				ar & request.resource_id_;
+				ar & util::serialization::make_sized<boost::uint16_t>(request.flash_id_);
+				ar & request.request_peer_count_;
+				ar & request.reqest_ip_;
+			} 
+			else
+			{
+				ar & response.resource_id_;
+				ar & util::serialization::make_sized<boost::uint16_t>(response.peer_infos_);
+			}
+
+		}
+
+		virtual boost::uint32_t length() const
+		{
+			boost::uint32_t len = ServerPacket::length() + sizeof(reserve_1)+sizeof(reserve_2);
+			if (IsRequest) {
+				len += sizeof(boost::uint16_t)+ request.flash_id_.size()
+                    + sizeof(request.resource_id_) + sizeof(request.request_peer_count_); 
+			} else{
+				len += sizeof(response.resource_id_);
+				len += sizeof(boost::uint16_t);
+				for (unsigned i = 0; i < response.peer_infos_.size(); ++i)
+				{
+					len += ((response.peer_infos_)[i]).length();
+				}
+				
+			}
+
+			return len;
+		}
+
+		FlashListWithIpPacket()
+		{
+			// IsRequest = 1;
+		}
+
+		// request
+		FlashListWithIpPacket(
+			boost::uint32_t transaction_id,
+			boost::uint32_t peer_version,
+			const RID & resource_id,
+			const std::string & flash_id,
+			boost::uint16_t request_peer_count,
+			boost::uint32_t reqest_ip,
+			const boost::asio::ip::udp::endpoint & endpoint_)
+		{
+			transaction_id_ = transaction_id;
+			peer_version_ = peer_version;
+			request.resource_id_ = resource_id;
+			request.flash_id_ = flash_id;
+			request.request_peer_count_ = request_peer_count;
+			request.reqest_ip_ = reqest_ip;
+			end_point = endpoint_;
+			IsRequest = 1;
+		}
+
+		// response
+		FlashListWithIpPacket(
+			boost::uint32_t transaction_id,
+			boost::uint8_t error_code,
+			const RID& resource_id,
+			const std::vector<FlashPeerInfo>& candidate_peer_info,
+			const boost::asio::ip::udp::endpoint& endpoint_)
+		{
+			transaction_id_ = transaction_id;
+			error_code_ = error_code;
+			response.resource_id_ = resource_id;
+			response.peer_infos_ = candidate_peer_info;
+			end_point = endpoint_;
+			IsRequest = 0;
+		}
+
+		FlashListWithIpPacket(
+			boost::uint32_t transaction_id,
+			boost::uint8_t error_code,
+			const RID& resource_id,            
+			const boost::asio::ip::udp::endpoint& endpoint_)
+		{
+			transaction_id_ = transaction_id;
+			error_code_ = error_code;
+			response.resource_id_ = resource_id;            
+			end_point = endpoint_;
+			IsRequest = 0;
+		}
+
+		struct Request {
+			RID resource_id_;
+			std::string flash_id_;
+			boost::uint16_t request_peer_count_;
+			boost::uint32_t reqest_ip_;
+		} request;
+		struct Response {
+			RID resource_id_;
+			std::vector<FlashPeerInfo> peer_infos_;
+		} response;
+	};
+
+
     //和list不同的是，这里制定了客户端的ip，而不是从socket里获取
     struct ListTcpWithIpPacket
         : public ServerPacketT<0x3d>
@@ -992,6 +1206,7 @@ namespace protocol
 
         handler.template register_packet<LeavePacket>();
         handler.template register_packet<ReportPacket>();
+		handler.template register_packet<FlashReportPacket>();
 
         // QueryPeerCountPacket内核不会发送，服务器使用
         handler.template register_packet<QueryPeerCountPacket>();
@@ -1008,6 +1223,10 @@ namespace protocol
         handler.template register_packet<ListTcpPacket>();
         //带客户端ip，查询资源，用于tracker网管
         handler.template register_packet<ListWithIpPacket>();
+		handler.template register_packet<FlashListWithIpPacket>();
+
+        handler.template register_packet<FlashReportPacket>();
+
         //带客户端ip，查询资源，用于tracker代理
         handler.template register_packet<ListTcpWithIpPacket>();
     }

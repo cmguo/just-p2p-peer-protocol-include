@@ -35,10 +35,6 @@ namespace protocol
         PacketType packet;
         packet.end_point = recv_buffer.end_point();
 
-        // backup 52 bytes
-        boost::uint8_t buffer[52] = {0};
-        memcpy(buffer, recv_buffer.GetHeadBuffer(), 52);
-
         ((protocol::Packet &)packet).PacketAction = PacketType::Action;
         ia >> packet;
         if (ia) 
@@ -47,7 +43,15 @@ namespace protocol
         }
         else
         {
-        //    assert(false);
+            boost::uint32_t ip = recv_buffer.end_point().address().to_v4().to_ulong();
+            if (invalid_ip_count_.count(ip) == 0)
+            {
+                invalid_ip_count_[ip] = 0;
+            }
+            else
+            {
+                invalid_ip_count_[ip]++;
+            }
         }
     }
 

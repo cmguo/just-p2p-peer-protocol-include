@@ -69,6 +69,16 @@ namespace protocol
             PacketType const & packet,
             boost::uint16_t dest_protocol_version);
 
+        std::map<boost::uint32_t, boost::uint32_t> & GetInvalidIpCountMap()
+        {
+            return invalid_ip_count_;
+        }
+
+        void ClearInvalidIpCountMap()
+        {
+            invalid_ip_count_.clear();
+        }
+
     protected:
         void UdpRecvFrom(
             UdpBuffer & recv_buffer);
@@ -111,6 +121,8 @@ namespace protocol
         boost::uint16_t minimal_protocol_version_;
         boost::uint32_t old_handle_count_;
         boost::uint32_t new_handle_count_;
+
+        std::map<boost::uint32_t, boost::uint32_t> invalid_ip_count_;
     };
 }
 
