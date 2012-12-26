@@ -33,6 +33,10 @@ namespace protocol
         uint32_t bitmap_size , byte_num;
         boost::uint8_t buf[32];
         ar & bitmap_size;
+        if (bitmap_size > 32*8)
+        {
+            bitmap_size = 0;
+        }
         byte_num = (bitmap_size + 7)/8;
         ar & framework::container::make_array(buf, byte_num);
         if (ar)
