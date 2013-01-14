@@ -17,11 +17,11 @@ namespace protocol
 #endif
     {
     private:
-        uint32_t block_id_;
+        boost::uint32_t block_id_;
         boost::uint16_t subpiece_index_;
 
     public:
-        LiveSubPieceInfo(uint32_t block_id, boost::uint16_t subpiece_index)
+        LiveSubPieceInfo(boost::uint32_t block_id, boost::uint16_t subpiece_index)
             : block_id_(block_id), subpiece_index_(subpiece_index)
         {
         }
@@ -31,7 +31,7 @@ namespace protocol
         {
         }
 
-        uint32_t GetBlockId() const { return block_id_; }
+        boost::uint32_t GetBlockId() const { return block_id_; }
         boost::uint16_t GetSubPieceIndex() const { return subpiece_index_; }
 
         template <typename Archive>

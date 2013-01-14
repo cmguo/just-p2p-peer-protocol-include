@@ -28,7 +28,7 @@ namespace protocol
     {
         // 以下速度均是KBps单位
         boost::uint8_t IsDownloading;
-        uint32_t OnlineTime;
+        boost::uint32_t OnlineTime;
         boost::uint16_t AvgDownload;
         boost::uint16_t NowDownload;
         boost::uint16_t AvgUpload;
@@ -83,7 +83,7 @@ namespace protocol
         boost::uint8_t StationNo;
         boost::uint8_t Reserve;
         boost::uint8_t ModNo;
-        uint32_t IP;
+        boost::uint32_t IP;
         boost::uint16_t Port;
         boost::uint8_t Type;  // 1 UDP, 2 Tracker for Live UdpServer
 
@@ -153,7 +153,7 @@ namespace protocol
     struct STUN_SERVER_INFO
     {
         boost::uint16_t Length;
-        uint32_t IP;
+        boost::uint32_t IP;
         boost::uint16_t Port;
         boost::uint8_t Type;
 
@@ -264,7 +264,7 @@ namespace protocol
     struct INDEX_SERVER_INFO
     {
         boost::uint16_t Length;
-        uint32_t IP;
+        boost::uint32_t IP;
         boost::uint16_t Port;
         boost::uint8_t Type;
 
@@ -276,7 +276,7 @@ namespace protocol
 
         INDEX_SERVER_INFO() : Type(1) {}
 
-        INDEX_SERVER_INFO(uint32_t ip, boost::uint16_t port, boost::uint8_t type = 1)
+        INDEX_SERVER_INFO(boost::uint32_t ip, boost::uint16_t port, boost::uint8_t type = 1)
         {
             this->Length = sizeof(INDEX_SERVER_INFO);
             this->IP = ip;
@@ -309,12 +309,12 @@ namespace protocol
         }
     };
 
-    const uint32_t INDEX_LIST_MOD_COUNT = 256u;
+    const boost::uint32_t INDEX_LIST_MOD_COUNT = 256u;
 
     struct DATACOLLECTION_SERVER_INFO
     {
         boost::uint16_t Length;
-        uint32_t IP;
+        boost::uint32_t IP;
         boost::uint16_t Port;
         boost::uint8_t Type;
 
@@ -326,7 +326,7 @@ namespace protocol
 
         DATACOLLECTION_SERVER_INFO() : Type(1) {}
 
-        DATACOLLECTION_SERVER_INFO(uint32_t ip, boost::uint16_t port, boost::uint8_t type = 1)
+        DATACOLLECTION_SERVER_INFO(boost::uint32_t ip, boost::uint16_t port, boost::uint8_t type = 1)
         {
             this->Length = sizeof(DATACOLLECTION_SERVER_INFO);
             this->IP = ip;
@@ -475,7 +475,7 @@ namespace protocol
     // Data On Download Stop
     struct PLAY_STOP_INFO
     {
-        uint32_t  FileOffset;
+        boost::uint32_t  FileOffset;
         boost::uint16_t  DurationInSecond;
         boost::uint16_t  TimeOffsetInSecond;
 
@@ -499,13 +499,13 @@ namespace protocol
         boost::uint16_t  MaxP2PDownloadSpeedInKBps;
         boost::uint16_t  AvgHttpSpeedInKBps;
         boost::uint16_t  AvgP2PSpeedInKBps;
-        uint32_t  HttpDataBytes;
-        uint32_t  P2PDataBytes;
+        boost::uint32_t  HttpDataBytes;
+        boost::uint32_t  P2PDataBytes;
         boost::uint8_t   PacketLostRate;
         boost::uint8_t   RedundantRate;
         boost::uint8_t   DownloadStatus;
-        uint32_t  FlvFileLength;
-        uint32_t  FlvDataRate;
+        boost::uint32_t  FlvFileLength;
+        boost::uint32_t  FlvDataRate;
         boost::uint16_t  FlvTimeDurationInSecond;
 
         template <typename Archive>
@@ -562,7 +562,7 @@ namespace protocol
     struct DATA_ITEM_ARRAY
     {
         boost::uint8_t     ITEMS_COUNT;
-        uint32_t    ITEMS_SIZE;
+        boost::uint32_t    ITEMS_SIZE;
         //      boost::uint8_t     ITEMS[];
         std::vector<boost::uint8_t> ITEMS;
 
@@ -694,9 +694,9 @@ namespace protocol
             << "MinDownloadSpeedInKBps: " << param.MinDownloadSpeedInKBps << ", "
             << "MaxDownloadSpeedInKBpsWhenIdle: " << param.MaxDownloadSpeedInKBpsWhenIdle << ", "
             << "MaxDownloadSpeedInKBpsWhenNormal: " << param.MaxDownloadSpeedInKBpsWhenNormal << ", "
-            << "BandwidthRatioWhenIdle: " << (uint32_t)param.BandwidthRatioWhenIdle << " / " << (param.BandwidthRatioWhenIdle * 100.0
+            << "BandwidthRatioWhenIdle: " << (boost::uint32_t)param.BandwidthRatioWhenIdle << " / " << (param.BandwidthRatioWhenIdle * 100.0
             / 255) << "%, "
-            << "BandwidthRatioWhenNormal: " << (uint32_t)param.BandwidthRatioWhenNormal << " / " << (param.BandwidthRatioWhenNormal *
+            << "BandwidthRatioWhenNormal: " << (boost::uint32_t)param.BandwidthRatioWhenNormal << " / " << (param.BandwidthRatioWhenNormal *
             100.0 / 255) << "% "
             << "}"
            ;

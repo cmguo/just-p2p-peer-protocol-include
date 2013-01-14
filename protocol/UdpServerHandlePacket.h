@@ -69,7 +69,7 @@ namespace protocol
 
         assert(boost::asio::ip::udp::endpoint() != packet.end_point);
         send_buffer.end_point(packet.end_point);
-        send_buffer.commit(sizeof(uint32_t));
+        send_buffer.commit(sizeof(boost::uint32_t));
         OUdpArchive oa(send_buffer);
         boost::uint8_t action = PacketType::Action;
         oa << action << packet;

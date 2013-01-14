@@ -23,8 +23,8 @@ namespace protocol
     private:
         typedef typename ContentType::pointer ContentTypePtr;
         ContentTypePtr data_;
-        uint32_t length_;
-        uint32_t offset_;
+        boost::uint32_t length_;
+        boost::uint32_t offset_;
 
     public:
         SubPieceBufferImp()
@@ -58,7 +58,7 @@ namespace protocol
 
         SubPieceBufferImp(
             ContentType * data,
-            uint32_t length = ContentType::sub_piece_size)
+            boost::uint32_t length = ContentType::sub_piece_size)
             : data_(data)
             , length_(length)
             , offset_(0)
@@ -67,7 +67,7 @@ namespace protocol
 
         SubPieceBufferImp(
             ContentTypePtr const & data,
-            uint32_t length = ContentType::sub_piece_size)
+            boost::uint32_t length = ContentType::sub_piece_size)
             : data_(data)
             , length_(length)
             , offset_(0)
@@ -85,7 +85,7 @@ namespace protocol
         }
 /*
         boost::uint8_t * Data(
-            uint32_t offset)
+            boost::uint32_t offset)
         {
             return (boost::uint8_t *)*data_ + offset;
         }
@@ -96,17 +96,17 @@ namespace protocol
         }
 /*
         boost::uint8_t const * Data(
-            uint32_t offset) const
+            boost::uint32_t offset) const
         {
             return (boost::uint8_t const *)*data_ + offset;
         }
 */
-        uint32_t Length() const
+        boost::uint32_t Length() const
         {
             return length_;
         }
 
-        uint32_t Offset() const
+        boost::uint32_t Offset() const
         {
             return offset_;
         }
@@ -118,24 +118,24 @@ namespace protocol
         }
 
         void Length(
-            uint32_t length)
+            boost::uint32_t length)
         {
             length_ = length;
         }
 
-        bool IsValid(uint32_t subpiece_max_length) const
+        bool IsValid(boost::uint32_t subpiece_max_length) const
         {
             return Data() && length_ > 0 && length_ <= subpiece_max_length;
         }
 /*
         void Offset(
-            uint32_t offset)
+            boost::uint32_t offset)
         {
             offset_ = offset;
         }
 
         SubPieceBuffer SubBuffer(
-            uint32_t offset) const
+            boost::uint32_t offset) const
         {
             SubPieceBuffer buffer;
             if (offset < length_)
@@ -148,8 +148,8 @@ namespace protocol
         }
 
         SubPieceBuffer SubBuffer(
-            uint32_t offset,
-            uint32_t length) const
+            boost::uint32_t offset,
+            boost::uint32_t length) const
         {
             SubPieceBuffer buffer;
             if (offset + length <= length_)

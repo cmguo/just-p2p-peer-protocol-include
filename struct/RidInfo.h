@@ -19,9 +19,9 @@ namespace protocol
     {
     public:
         RID rid_;
-        uint32_t file_length_;
-        uint32_t block_size_;
-        uint32_t block_count_;
+        boost::uint32_t file_length_;
+        boost::uint32_t block_size_;
+        boost::uint32_t block_count_;
 
     public:
         std::vector<MD5> block_md5_s_;
@@ -38,36 +38,36 @@ namespace protocol
             return rid_;
         }
 
-        uint32_t GetFileLength() const
+        boost::uint32_t GetFileLength() const
         {
             return file_length_;
         }
 
-        uint32_t GetBlockSize() const
+        boost::uint32_t GetBlockSize() const
         {
             return block_size_;
         }
 
-        uint32_t GetBlockCount() const
+        boost::uint32_t GetBlockCount() const
         {
             return block_count_;
         }
 
         void InitByFileLength(
-            uint32_t file_length)
+            boost::uint32_t file_length)
         {
             file_length_ = file_length;
 
             if (file_length_ <= BLOCK_MIN_SIZE * BLOCK_MAX_COUNT)
             {
                 block_size_ = BLOCK_MIN_SIZE;
-                block_count_ = UpperDiv<uint32_t>(file_length_, block_size_);
+                block_count_ = UpperDiv<boost::uint32_t>(file_length_, block_size_);
             }
             else
             {
-                block_size_ = static_cast<uint32_t>(UpperDiv<boost::uint64_t>(file_length_, BLOCK_MAX_COUNT));
-                block_size_ = UpperDiv<uint32_t>(block_size_, PIECE_SIZE) * PIECE_SIZE;
-                block_count_ = static_cast<uint32_t>(UpperDiv<boost::uint64_t>(file_length_, block_size_));
+                block_size_ = static_cast<boost::uint32_t>(UpperDiv<boost::uint64_t>(file_length_, BLOCK_MAX_COUNT));
+                block_size_ = UpperDiv<boost::uint32_t>(block_size_, PIECE_SIZE) * PIECE_SIZE;
+                block_count_ = static_cast<boost::uint32_t>(UpperDiv<boost::uint64_t>(file_length_, block_size_));
             }
             assert(block_size_ %  PIECE_SIZE == 0);
         }

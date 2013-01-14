@@ -290,7 +290,7 @@ namespace protocol
             ar & block_map_;
         }
 
-        AnnouncePacket(uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
+        AnnouncePacket(boost::uint32_t transaction_id, const RID & rid, const Guid & peer_guid,
             const PEER_DOWNLOAD_INFO & peer_download_info, const BlockMap & block_map,
             const boost::asio::ip::udp::endpoint & endpoint_)
         {

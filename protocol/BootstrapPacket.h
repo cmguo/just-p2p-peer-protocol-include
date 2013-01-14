@@ -283,7 +283,7 @@ namespace protocol
             
             memset(response.mod_index_map_, 0, INDEX_LIST_MOD_COUNT);
 
-            for (uint32_t i = 0; i < INDEX_LIST_MOD_COUNT && i < mod_index_map.size(); ++i)
+            for (boost::uint32_t i = 0; i < INDEX_LIST_MOD_COUNT && i < mod_index_map.size(); ++i)
             {
                 response.mod_index_map_[i] = mod_index_map[i];
             }

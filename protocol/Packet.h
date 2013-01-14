@@ -26,9 +26,9 @@ namespace protocol
 
     struct Packet
     {
-        static uint32_t NewTransactionID()
+        static boost::uint32_t NewTransactionID()
         {
-            static uint32_t glocal_transaction_id = 0;
+            static boost::uint32_t glocal_transaction_id = 0;
             glocal_transaction_id ++;
             return glocal_transaction_id;
         }
@@ -49,7 +49,7 @@ namespace protocol
 
         boost::asio::ip::udp::endpoint end_point;
         boost::uint8_t PacketAction;
-        uint32_t transaction_id_;
+        boost::uint32_t transaction_id_;
     };
 
     template <boost::uint8_t action>

@@ -30,7 +30,7 @@ namespace protocol
     template <typename Archive>
     void load(Archive & ar, BlockMap & t)
     {
-        uint32_t bitmap_size , byte_num;
+        boost::uint32_t bitmap_size , byte_num;
         boost::uint8_t buf[32];
         ar & bitmap_size;
         if (bitmap_size > 32*8)
@@ -48,7 +48,7 @@ namespace protocol
     template <typename Archive>
     void save(Archive & ar, BlockMap const & t)
     {
-        uint32_t bitset_size , byte_num;
+        boost::uint32_t bitset_size , byte_num;
         boost::uint8_t buf[32];
         boost::uint8_t * p = buf;
         bitset_size = t.GetCount();

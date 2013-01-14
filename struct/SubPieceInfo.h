@@ -52,8 +52,8 @@ namespace protocol
         }
 
         static void MakeByPosition(
-            uint32_t position,
-            uint32_t block_size,
+            boost::uint32_t position,
+            boost::uint32_t block_size,
             SubPieceInfo & subpiece_info)
         {
             subpiece_info.block_index_ = (block_size == 0 ? 0 : position / block_size);
@@ -82,38 +82,38 @@ namespace protocol
             return block_index_ == n.block_index_ && subpiece_index_ == n.subpiece_index_;
         }
 
-        uint32_t GetPieceIndex() const
+        boost::uint32_t GetPieceIndex() const
         {
             return subpiece_index_ / SUB_PIECE_COUNT_PER_PIECE;
         }
 
-        uint32_t GetSubPieceIndexInFile(
-            uint32_t block_size) const
+        boost::uint32_t GetSubPieceIndexInFile(
+            boost::uint32_t block_size) const
         {
             assert(block_size % PIECE_SIZE == 0);
-            uint32_t subpiece_count_in_block = block_size / SUB_PIECE_SIZE;
+            boost::uint32_t subpiece_count_in_block = block_size / SUB_PIECE_SIZE;
             return subpiece_count_in_block*block_index_ + subpiece_index_;
         }
 
-        uint32_t GetSubPieceIndexInBlock() const
+        boost::uint32_t GetSubPieceIndexInBlock() const
         {
             return subpiece_index_;
         }
 
-        uint32_t GetSubPieceIndexInPiece() const
+        boost::uint32_t GetSubPieceIndexInPiece() const
         {
             return subpiece_index_ % SUB_PIECE_COUNT_PER_PIECE;
         }
 
-        uint32_t GetPosition(
-            uint32_t block_size) const
+        boost::uint32_t GetPosition(
+            boost::uint32_t block_size) const
         {
             assert(block_size % PIECE_SIZE == 0);
             return block_index_*block_size + subpiece_index_*SUB_PIECE_SIZE;
         }
 
-        uint32_t GetEndPosition(
-            uint32_t block_size) const
+        boost::uint32_t GetEndPosition(
+            boost::uint32_t block_size) const
         {
             assert(block_size % PIECE_SIZE == 0);
             return GetPosition(block_size) + SUB_PIECE_SIZE;

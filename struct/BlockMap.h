@@ -26,14 +26,14 @@ namespace protocol
 
         BlockMap(
             boost::uint8_t* inbuf,
-            uint32_t bytes_num,
-            uint32_t bits_num)
+            boost::uint32_t bytes_num,
+            boost::uint32_t bits_num)
         {
             if (inbuf == NULL)
             {
                 bitset_.resize(bits_num, false);
             }
-            for (uint32_t i = 0;i<bytes_num;i++)
+            for (boost::uint32_t i = 0;i<bytes_num;i++)
             {
                 bitset_.append(inbuf[i]);
             }
@@ -45,7 +45,7 @@ namespace protocol
         friend std::ostream & operator << (std::ostream & os, const BlockMap & bm);
 
         static BlockMap::p Create(
-            uint32_t bitmap_size)
+            boost::uint32_t bitmap_size)
         {
             BlockMap::p pointer;
             pointer = BlockMap::p(new BlockMap(NULL, 0, bitmap_size));
@@ -53,13 +53,13 @@ namespace protocol
         };
 
         void Set(
-            uint32_t index)
+            boost::uint32_t index)
         {
             assert(index<bitset_.size());
             bitset_.set(index);
         }
         void Reset(
-            uint32_t index)
+            boost::uint32_t index)
         {
             assert(index<bitset_.size());
             bitset_.reset(index);
@@ -78,7 +78,7 @@ namespace protocol
         };
 
         bool HasBlock(
-            uint32_t index) const
+            boost::uint32_t index) const
         {
             if (index < bitset_.size()) {
                 return bitset_.test(index);
@@ -86,7 +86,7 @@ namespace protocol
             return false;
         };
 
-        uint32_t GetCount() const
+        boost::uint32_t GetCount() const
         {
             return bitset_.count();
         }
@@ -99,7 +99,7 @@ namespace protocol
         }
 
         void Resize(
-            uint32_t num_bits,
+            boost::uint32_t num_bits,
             bool value = false)
         {
             bitset_.resize(num_bits, value);
@@ -117,7 +117,7 @@ namespace protocol
         void Set(
             int index)
         {
-            assert((uint32_t)index<bitset_.size());
+            assert((boost::uint32_t)index<bitset_.size());
             bitset_.set(index);
         }
 

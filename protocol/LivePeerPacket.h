@@ -120,7 +120,7 @@ namespace protocol
         {
             // 计算这一个block含有多少位01串
             // 第一个subpiece单独占一位，之后每16个subpiece占一位，最后如果不足16个subpiece也占1位
-            uint32_t bit_set_num = (subpiece_no[i] + SUBPIECE_COUNT_IN_ONE_CHECK - 2) / SUBPIECE_COUNT_IN_ONE_CHECK + 1;
+            boost::uint32_t bit_set_num = (subpiece_no[i] + SUBPIECE_COUNT_IN_ONE_CHECK - 2) / SUBPIECE_COUNT_IN_ONE_CHECK + 1;
 
             assert(live_bits.size() >= bit_set_num);
 
@@ -128,7 +128,7 @@ namespace protocol
 
             assert(live_bits.front());
 
-            for (uint32_t j = 0; j < bit_set_num; ++j)
+            for (boost::uint32_t j = 0; j < bit_set_num; ++j)
             {
                 bit_set[j] = live_bits.front();
                 live_bits.pop_front();
@@ -140,7 +140,7 @@ namespace protocol
 
         // 从live_bits中取完后，live_bits应该刚好变空，或者是剩下的都是0
         // 先考虑构造包的时候，假定我们总共有19个校验块（在这里把除第0个subpiece的每16个subpiece称为一个校验块，第0个subpiece自己是一个校验块），
-        // 如果live_bits是 10110110 11011011 101，那么转化成uint8_t之后就是182,219,160(最后不足八位的在低位补0)
+        // 如果live_bits是 10110110 11011011 101，那么转化成boost::uint8_t之后就是182,219,160(最后不足八位的在低位补0)
         // 收到包时，live_bits是10110110 11011011 10100000，因为不知道最后的0是不足补上去的，还是这个校验块不在，所以都存到了live_bits中
         // 那么也就是说live_bits中前19位是我所需要的，从第20位到最后是由于不足八位而补的0
         while (!live_bits.empty())
@@ -203,7 +203,7 @@ namespace protocol
             buffer = iter->second;
 
             // 通过左移操作将每8位转成一个uint8类型的
-            for (uint32_t i = 0; i < buffer.size(); ++i)
+            for (boost::uint32_t i = 0; i < buffer.size(); ++i)
             {
                 sum = sum << 1;
                 sum += buffer[i];
@@ -238,7 +238,7 @@ namespace protocol
             ar & live_announce_map_;
         }
 
-        LiveAnnouncePacket(uint32_t transaction_id, const RID & rid,
+        LiveAnnouncePacket(boost::uint32_t transaction_id, const RID & rid,
             boost::uint16_t block_info_count,
             const std::map<boost::uint32_t, boost::dynamic_bitset<boost::uint8_t> > & subpiece_map,
             const boost::asio::ip::udp::endpoint & endpoint_)
@@ -250,7 +250,7 @@ namespace protocol
             end_point = endpoint_;
         }
 
-        LiveAnnouncePacket(uint32_t transaction_id, const RID & rid,
+        LiveAnnouncePacket(boost::uint32_t transaction_id, const RID & rid,
             const LiveAnnounceMap & live_announce_map,
             const boost::asio::ip::udp::endpoint & endpoint_)
         {

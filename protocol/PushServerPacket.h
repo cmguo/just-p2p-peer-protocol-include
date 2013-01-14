@@ -57,7 +57,7 @@ namespace protocol
         // request
         QueryPushTaskPacket(boost::uint32_t transaction_id, const Guid& peer_guid,
             const boost::asio::ip::udp::endpoint & endpoint_, 
-            uint32_t used_disk_size, uint32_t upload_bandwidth_kbs, uint32_t avg_upload_speed_kbs)
+            boost::uint32_t used_disk_size, boost::uint32_t upload_bandwidth_kbs, boost::uint32_t avg_upload_speed_kbs)
         {
             transaction_id_ = transaction_id;
             request.peer_guid_ = peer_guid;
@@ -100,9 +100,9 @@ namespace protocol
 
         struct Request {
             Guid peer_guid_;
-            uint32_t used_disk_size_;
-            uint32_t upload_bandwidth_kbs_;
-            uint32_t avg_upload_speed_kbs_;
+            boost::uint32_t used_disk_size_;
+            boost::uint32_t upload_bandwidth_kbs_;
+            boost::uint32_t avg_upload_speed_kbs_;
         } request;
         struct Response {
             RidInfo rid_info_;

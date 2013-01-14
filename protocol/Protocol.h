@@ -10,20 +10,20 @@
 #include <framework/Framework.h>
 #include <framework/string/Uuid.h>
 
-using boost::uint32_t;
+//using boost::uint32_t;
 using std::string;
 
 typedef framework::string::Uuid RID;
 typedef framework::string::Uuid MD5;
 typedef framework::string::Uuid Guid;
 
-const uint32_t SUB_PIECE_SIZE = 1024;
-const uint32_t SUB_PIECE_COUNT_PER_PIECE = 128;
-const uint32_t PIECE_SIZE = SUB_PIECE_SIZE * SUB_PIECE_COUNT_PER_PIECE;
-const uint32_t BLOCK_MIN_SIZE = 2*1024*1024;
-const uint32_t BLOCK_MAX_COUNT = 50;
+const boost::uint32_t SUB_PIECE_SIZE = 1024;
+const boost::uint32_t SUB_PIECE_COUNT_PER_PIECE = 128;
+const boost::uint32_t PIECE_SIZE = SUB_PIECE_SIZE * SUB_PIECE_COUNT_PER_PIECE;
+const boost::uint32_t BLOCK_MIN_SIZE = 2*1024*1024;
+const boost::uint32_t BLOCK_MAX_COUNT = 50;
 
-const uint32_t LIVE_SUB_PIECE_SIZE = 1400;
+const boost::uint32_t LIVE_SUB_PIECE_SIZE = 1400;
 
 #include "struct/Base.h"
 #include "struct/serialization.h"

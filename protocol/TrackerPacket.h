@@ -18,12 +18,12 @@
 namespace protocol
 {
     //查询guid对应的tracker分组的算法
-    inline uint32_t GetGuidMod(const Guid& guid, uint32_t mod)
+    inline boost::uint32_t GetGuidMod(const Guid& guid, boost::uint32_t mod)
     {
         boost::uint64_t buf[2];
         memcpy(&buf, &guid.data(), sizeof(guid.data()));
         buf[1] = framework::system::BytesOrder::little_endian_to_host_longlong(buf[1]);
-        return static_cast<uint32_t> (buf[1] % mod);
+        return static_cast<boost::uint32_t> (buf[1] % mod);
     }
 
     /**

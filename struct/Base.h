@@ -29,11 +29,11 @@ namespace protocol
 	//////////////////////////////////////////////////////////////////////////
 	struct SocketAddr
 	{
-		uint32_t IP;
+		boost::uint32_t IP;
 		boost::uint16_t Port;
 
 		SocketAddr(
-			uint32_t ip = 0,
+			boost::uint32_t ip = 0,
 			boost::uint16_t port = 0)
 			: IP(ip)
 			, Port(port)
@@ -87,7 +87,7 @@ namespace protocol
 	//////////////////////////////////////////////////////////////////////////
 	struct PeerAddr
 	{
-		uint32_t IP;
+		boost::uint32_t IP;
 		boost::uint16_t UdpPort;
 
 		PeerAddr()
@@ -97,7 +97,7 @@ namespace protocol
 		}
 
 		PeerAddr(
-			uint32_t ip,
+			boost::uint32_t ip,
 			boost::uint16_t udp_port)
 		{
 			IP = ip;
@@ -156,12 +156,12 @@ namespace protocol
 	//////////////////////////////////////////////////////////////////////////
 	struct CandidatePeerInfo
 	{
-		uint32_t IP;
+		boost::uint32_t IP;
 		boost::uint16_t UdpPort;
 		boost::uint16_t PeerVersion;
-		uint32_t DetectIP;
+		boost::uint32_t DetectIP;
 		boost::uint16_t DetectUdpPort;
-		uint32_t StunIP;
+		boost::uint32_t StunIP;
 		boost::uint16_t StunUdpPort;
 
 		boost::uint8_t  PeerNatType;
@@ -191,7 +191,7 @@ namespace protocol
 			//return len += sizeof(IP)+sizeof(UdpPort)+sizeof(PeerVersion)+sizeof(DetectIP)+sizeof(DetectUdpPort)+sizeof(StunIP)+sizeof(StunUdpPort)
 			//len += sizeof(PeerNatType)+sizeof(UploadPriority)+sizeof(IdleTimeInMins)+sizeof(TrackerPriority);
 			int len = 0;
-			len += sizeof(uint32_t) + sizeof(boost::uint16_t) + sizeof(boost::uint16_t) + sizeof(uint32_t) + sizeof(boost::uint16_t) + sizeof(uint32_t) + sizeof(boost::uint16_t);
+			len += sizeof(boost::uint32_t) + sizeof(boost::uint16_t) + sizeof(boost::uint16_t) + sizeof(boost::uint32_t) + sizeof(boost::uint16_t) + sizeof(boost::uint32_t) + sizeof(boost::uint16_t);
 
 			len += sizeof(boost::uint8_t) + sizeof(boost::uint8_t) + sizeof(boost::uint8_t) + sizeof(boost::uint8_t);
 			return len;
@@ -216,12 +216,12 @@ namespace protocol
 		}
 
 		CandidatePeerInfo(
-			uint32_t ip,
+			boost::uint32_t ip,
 			boost::uint16_t udp_port,
 			boost::uint16_t peer_version,
-			uint32_t detect_ip = 0,
+			boost::uint32_t detect_ip = 0,
 			boost::uint16_t detect_udp_port = 0,
-			uint32_t stun_ip = 0,
+			boost::uint32_t stun_ip = 0,
 			boost::uint16_t stun_udp_port = 0)
 		{
 			IP = ip;
@@ -236,12 +236,12 @@ namespace protocol
 		}
 
 		CandidatePeerInfo(
-			uint32_t ip,
+			boost::uint32_t ip,
 			boost::uint16_t udp_port,
 			boost::uint16_t peer_version,
-			uint32_t detect_ip,
+			boost::uint32_t detect_ip,
 			boost::uint16_t detect_udp_port,
-			uint32_t stun_ip,
+			boost::uint32_t stun_ip,
 			boost::uint16_t stun_udp_port,
 			boost::uint8_t  peer_nat_type,
 			boost::uint8_t  upload_priority,
@@ -261,7 +261,7 @@ namespace protocol
 			TrackerPriority = tracker_priority;
 		}
 
-		bool NeedStunInvoke(uint32_t LocalDetectedIP) const
+		bool NeedStunInvoke(boost::uint32_t LocalDetectedIP) const
 		{
 			if (LocalDetectedIP == 0 || LocalDetectedIP != DetectIP)
 			{
@@ -282,7 +282,7 @@ namespace protocol
 			return DetectIP != 0 && DetectIP == peer_info.DetectIP;
 		}
 
-		boost::asio::ip::udp::endpoint GetConnectEndPoint(uint32_t LocalDetectedIP) const
+		boost::asio::ip::udp::endpoint GetConnectEndPoint(boost::uint32_t LocalDetectedIP) const
 		{
 			if (DetectIP == 0)
 			{
@@ -329,7 +329,7 @@ namespace protocol
 			return addr;
 		}
 
-		SocketAddr GetKeySocketAddr(uint32_t LocalDetectedIP) const
+		SocketAddr GetKeySocketAddr(boost::uint32_t LocalDetectedIP) const
 		{
 			if (LocalDetectedIP == 0 || LocalDetectedIP != DetectIP)
 				return GetDetectSocketAddr();
@@ -377,7 +377,7 @@ namespace protocol
 	struct FlashPeerInfo
 	{
 		std::string FlashID;
-		uint32_t IP;
+		boost::uint32_t IP;
 		boost::uint16_t HttpPort;
 		boost::uint16_t PeerVersion;
 		boost::uint8_t  UploadPriority;
@@ -415,7 +415,7 @@ namespace protocol
 		FlashPeerInfo(
 
 			const std::string& flash_id,
-			uint32_t ip,
+			boost::uint32_t ip,
 			boost::uint16_t udpport,
 			boost::uint16_t peerversion,
 			boost::uint8_t  uploadpriority,
@@ -467,16 +467,16 @@ namespace protocol
 		return os << "Address: " << framework::network::Endpoint(info.IP, info.UdpPort).to_string()
 			<< ", Detected Address: " << framework::network::Endpoint(info.DetectIP, info.DetectUdpPort).to_string()
 			<< ", Stun Address: " << framework::network::Endpoint(info.StunIP, info.StunUdpPort).to_string()
-			<< ", PeerVersion: " << info.PeerVersion<<" trackerprority:"<<(uint32_t)info.TrackerPriority
-			<< ", UploadPriority: " << (uint32_t)info.UploadPriority
+			<< ", PeerVersion: " << info.PeerVersion<<" trackerprority:"<<(boost::uint32_t)info.TrackerPriority
+			<< ", UploadPriority: " << (boost::uint32_t)info.UploadPriority
 			<<", PeerNatType:"<<short(info.PeerNatType);
 	}
 
     inline std::ostream& operator << (std::ostream& os, const FlashPeerInfo& info)
     {
         return os << "Address: " << framework::network::Endpoint(info.IP, info.HttpPort).to_string()
-            << ", PeerVersion: " << info.PeerVersion<<" trackerprority:"<<(uint32_t)info.TrackerPriority
-            << ", UploadPriority: " << (uint32_t)info.UploadPriority
+            << ", PeerVersion: " << info.PeerVersion<<" trackerprority:"<<(boost::uint32_t)info.TrackerPriority
+            << ", UploadPriority: " << (boost::uint32_t)info.UploadPriority
             <<", flashID:"<<info.FlashID;
     }
 

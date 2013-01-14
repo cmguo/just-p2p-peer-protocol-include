@@ -15,7 +15,7 @@
 
 namespace protocol
 {
-    template <uint32_t size>
+    template <boost::uint32_t size>
     class SubPieceContentImp
 #ifdef USE_MEMORY_POOL
         : public framework::memory::MemoryPoolObjectNoThrow<SubPieceContentImp<size> >
@@ -36,12 +36,12 @@ namespace protocol
 
     public:
 #ifdef USE_MEMORY_POOL
-        static uint32_t get_left_capacity()
+        static boost::uint32_t get_left_capacity()
         {
             return framework::memory::MemoryPoolObjectNoThrow<SubPieceContentImp<size> >::get_pool().left_object();
         }
 
-        static uint32_t get_num_object()
+        static boost::uint32_t get_num_object()
         {
             return framework::memory::MemoryPoolObjectNoThrow<SubPieceContentImp<size> >::get_pool().num_object();
         }
@@ -51,7 +51,7 @@ namespace protocol
             return framework::memory::MemoryPoolObjectNoThrow<SubPieceContentImp<size> >::get_pool().consumption();
         }
 
-        static uint32_t get_max_object()
+        static boost::uint32_t get_max_object()
         {
             return framework::memory::MemoryPoolObjectNoThrow<SubPieceContentImp<size> >::get_pool().max_object();
         }
@@ -111,7 +111,7 @@ namespace protocol
         }
 
     public:
-        static const uint32_t sub_piece_size = size;
+        static const boost::uint32_t sub_piece_size = size;
 
     private:
         boost::uint8_t nref_;

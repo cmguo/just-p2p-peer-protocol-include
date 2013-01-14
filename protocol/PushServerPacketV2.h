@@ -99,7 +99,7 @@ namespace protocol
 
         // request
         QueryPushTaskPacketV2(boost::uint32_t transaction_id, const Guid& peer_guid, boost::asio::ip::udp::endpoint endpoint_, 
-			uint32_t used_disk_size, uint32_t upload_bandwidth_kbs, uint32_t avg_upload_speed_kbs)
+			boost::uint32_t used_disk_size, boost::uint32_t upload_bandwidth_kbs, boost::uint32_t avg_upload_speed_kbs)
         {
             transaction_id_ = transaction_id;
             request.peer_guid_ = peer_guid;
@@ -137,9 +137,9 @@ namespace protocol
 
         struct Request {
             Guid peer_guid_;
-            uint32_t used_disk_size_;
-            uint32_t upload_bandwidth_kbs_;
-            uint32_t avg_upload_speed_kbs_;
+            boost::uint32_t used_disk_size_;
+            boost::uint32_t upload_bandwidth_kbs_;
+            boost::uint32_t avg_upload_speed_kbs_;
 			std::vector<PlayHistoryItem> play_history_vec_;
         } request;
 
@@ -199,8 +199,8 @@ namespace protocol
 
         // request
         QueryPushTaskPacketV3(boost::uint32_t transaction_id, const Guid& peer_guid, boost::asio::ip::udp::endpoint 
-            endpoint_, uint32_t used_disk_size, uint32_t upload_bandwidth_kbs, uint32_t avg_upload_speed_kbs, 
-            uint32_t total_disk_size, uint32_t online_percent, uint32_t nat_type)
+            endpoint_, boost::uint32_t used_disk_size, boost::uint32_t upload_bandwidth_kbs, boost::uint32_t avg_upload_speed_kbs, 
+            boost::uint32_t total_disk_size, boost::uint32_t online_percent, boost::uint32_t nat_type)
         {
             transaction_id_ = transaction_id;
             request.peer_guid_ = peer_guid;
@@ -241,12 +241,12 @@ namespace protocol
 
         struct Request {
             Guid peer_guid_;
-            uint32_t used_disk_size_;
-            uint32_t upload_bandwidth_kbs_;
-            uint32_t avg_upload_speed_kbs_;
-            uint32_t total_disk_size_;
-            uint32_t online_percent_;
-            uint32_t nat_type_;
+            boost::uint32_t used_disk_size_;
+            boost::uint32_t upload_bandwidth_kbs_;
+            boost::uint32_t avg_upload_speed_kbs_;
+            boost::uint32_t total_disk_size_;
+            boost::uint32_t online_percent_;
+            boost::uint32_t nat_type_;
 			std::vector<PlayHistoryItem> play_history_vec_;
         } request;
 

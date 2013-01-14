@@ -42,8 +42,8 @@ namespace protocol
 
         bool Listen(const std::string& ip,boost::uint16_t port);
 
-        uint32_t Recv(
-            uint32_t count);
+        boost::uint32_t Recv(
+            boost::uint32_t count);
 
         void Close();
 
@@ -92,11 +92,11 @@ namespace protocol
             boost::uint16_t dest_protocol_version);
 
         void HandleUdpSendTo(const boost::system::error_code & error,
-            uint32_t bytes_transferred, boost::shared_ptr<UdpBuffer> send_buffer);
+            boost::uint32_t bytes_transferred, boost::shared_ptr<UdpBuffer> send_buffer);
 
         void HandleUdpRecvFrom(
             const boost::system::error_code & error,
-            uint32_t bytes_transferred,
+            boost::uint32_t bytes_transferred,
             UdpBuffer & recv_buffer);
 
         template <typename Packet>
