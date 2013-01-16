@@ -303,6 +303,61 @@ namespace protocol
 
         string stop_url_;
     };
+
+    struct TcpQuerySpeedPacket
+        : TcpCommonPacket
+        , PacketT<0xD8>
+    {
+        template <typename Archive>
+        void serialize(Archive &ar)
+        {
+            TcpCommonPacket::serialize(ar);
+
+            if (!is_response_)
+            {
+                ar & request.rid_;
+                ar & request.vip_state_;
+            }
+            else
+            {
+                ar & response.download_speed_;
+                ar & response.sn_speed_;
+            }
+        }
+
+        TcpQuerySpeedPacket(RID rid, boost::uint8_t vip_state)
+            : is_response_(false)
+        {
+            request.rid_ = rid;
+            request.vip_state_ = vip_state;
+        }
+
+        TcpQuerySpeedPacket(boost::uint32_t download_speed, boost::uint32_t sn_speed)
+            : is_response_(true)
+        {
+            response.download_speed_ = download_speed;
+            response.sn_speed_ = sn_speed;
+        }
+
+        TcpQuerySpeedPacket()
+            : is_response_(false)
+        {
+        }
+
+        bool is_response_;
+
+        struct Request
+        {
+            RID rid_;
+            boost::uint8_t vip_state_;
+        } request;
+
+        struct Response
+        {
+            boost::uint32_t download_speed_;
+            boost::uint32_t sn_speed_;
+        } response;
+    };
 }
 
 #endif

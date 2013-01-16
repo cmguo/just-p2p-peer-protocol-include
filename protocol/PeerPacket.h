@@ -739,6 +739,15 @@ namespace protocol
             ar & util::serialization::make_sized<boost::uint16_t>(resource_name_);
             ar & util::serialization::make_sized<boost::uint16_t>(subpiece_infos_);
             ar & priority_;
+            if (ar)
+            {
+                ar & util::serialization::make_sized<boost::uint16_t>(type_);
+
+                if (!ar)
+                {
+                    ar.clear();
+                }
+            }
         }
 
         RequestSubPiecePacketFromSN()
@@ -752,6 +761,7 @@ namespace protocol
             const std::vector<SubPieceInfo> & sub_piece_info,
             const boost::asio::ip::udp::endpoint & endpoint_,
             boost::uint16_t priority,
+            const std::string & type,
             boost::uint16_t reserve = 0)
         {
             transaction_id_ = transaction_id;
@@ -761,6 +771,8 @@ namespace protocol
             protocol_version_ = PEER_VERSION;
             end_point = endpoint_;
             priority_ = priority;
+            // type限长16个字节
+            type_ = type.substr(0, 16);
             reserve_ = reserve;
         }
 
@@ -773,6 +785,7 @@ namespace protocol
         std::string resource_name_;
         std::vector<SubPieceInfo> subpiece_infos_;
         boost::uint16_t priority_;
+        std::string type_;
 
         static const boost::uint16_t DefaultPriority = 50;
         static const boost::uint16_t Priority10 = 10;
