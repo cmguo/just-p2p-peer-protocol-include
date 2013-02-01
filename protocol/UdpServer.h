@@ -13,6 +13,9 @@
 #include <protocol/Protocol.h>
 #include <struct/UdpBuffer.h>
 
+static boost::uint32_t backup_length_;
+static boost::uint8_t backup_buffer_[2048];
+
 namespace protocol
 {
     struct IUdpServerListener
@@ -123,9 +126,6 @@ namespace protocol
         boost::uint32_t new_handle_count_;
 
         std::map<boost::uint32_t, boost::uint32_t> invalid_ip_count_;
-    public:
-        boost::uint32_t backup_length_;
-        boost::uint8_t backup_buffer_[2048];
     };
 }
 
