@@ -13,9 +13,6 @@
 #include <protocol/Protocol.h>
 #include <struct/UdpBuffer.h>
 
-static boost::uint32_t backup_length_;
-static boost::uint8_t backup_buffer_[2048];
-
 namespace protocol
 {
     struct IUdpServerListener
