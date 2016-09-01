@@ -18,7 +18,7 @@ inline boost::uint32_t check_sum_old(
     for (; iter != end; ++iter) {
         buf = buffer_cast<boost::uint32_t const *>(buffer(*iter));
         assert(size == 0);
-        assert(((boost::uint32_t)buf & (sizeof(boost::uint32_t) - 1)) == 0);  // 地址必须4字节对齐
+        assert(((intptr_t)buf & (sizeof(boost::uint32_t) - 1)) == 0);  // 地址必须4字节对齐
         size = buffer_size(buffer(*iter));
         // 兼容老算法的BUG，最后8个字节被拆成8个字节独立计算了
         iterator iter1(iter);
@@ -62,7 +62,7 @@ inline boost::uint32_t check_sum_new(
     for (; iter != end; ++iter) {
         buf = buffer_cast<boost::uint32_t const *>(buffer(*iter));
         assert(size == 0);
-        assert(((boost::uint32_t)buf & (sizeof(boost::uint32_t) - 1)) == 0);  // 地址必须4字节对齐
+        assert(((intptr_t)buf & (sizeof(boost::uint32_t) - 1)) == 0);  // 地址必须4字节对齐
         size = buffer_size(buffer(*iter));
         // 兼容老算法的BUG，最后8个字节被拆成8个字节独立计算了
         iterator iter1(iter);
